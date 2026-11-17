@@ -12,9 +12,9 @@
 	import type { Result } from '../lib/types';
 	import QuestionCard from '../lib/components/QuestionCard.svelte';
 	import Summary from '../lib/components/Summary.svelte';
-	import Scene from '../lib/components/Scene.svelte';
+	import Logo3D from '../lib/retro/Logo3D.svelte';
 	import HoneyComb from '../lib/components/HoneyComb.svelte';
-	import QueenBee from '../lib/components/QueenBee.svelte';
+	import Bee3D from '../lib/retro/Bee3D.svelte';
 
 	const today = todayKey();
 	const requested = $derived(page.url.searchParams.get('date'));
@@ -115,164 +115,153 @@
 	<title>The Queen Bee — daily trivia with a twist</title>
 </svelte:head>
 
+{#snippet honeyGem(cls: string)}
+	<!-- Flat-shaded honey drop pickup -->
+	<svg viewBox="0 0 40 48" class={cls} aria-hidden="true">
+		<polygon points="20,2 8,28 20,30" fill="#fff3a0" />
+		<polygon points="20,2 32,28 20,30" fill="#ffc21e" />
+		<polygon points="8,28 20,46 20,30" fill="#e08a00" />
+		<polygon points="32,28 20,46 20,30" fill="#9a4a00" />
+		<polygon points="20,2 8,28 20,46 32,28" fill="none" stroke="#0b0820" stroke-width="2.5" stroke-linejoin="round" />
+	</svg>
+{/snippet}
+
 {#if !started}
 	<!-- ───────────── Title screen ───────────── -->
-	<div class="flex min-h-screen flex-col">
-		<div class="relative">
-			<Scene tall />
-			<div class="pointer-events-none absolute inset-x-0 top-6 text-center sm:top-8">
-				<h1 class="title-glow text-4xl leading-none sm:text-6xl">The Queen Bee</h1>
-			</div>
+	<main class="flex min-h-screen flex-col items-center px-4 pt-6 pb-16 text-center sm:pt-10">
+		<div class="w-full max-w-2xl">
+			<p class="text-gold font-retro text-2xl tracking-[0.4em] sm:text-3xl">THE</p>
+			<Logo3D text="QUEEN BEE" label="The Queen Bee" />
 		</div>
-		<main class="hive flex-1 px-4 pt-8 pb-12 text-center">
-			<div class="mx-auto max-w-lg">
-				<p class="font-pixel text-lg tracking-[0.3em] text-sapphire sm:text-xl">The daily buzz</p>
-				<p class="mt-3 text-sm text-honey-200/70">
-					6 easy prompts · 30 seconds each · the twist decides your honey
-				</p>
 
-				<button onclick={start} class="pixel-btn mt-10 w-full bg-honey-500 py-5 text-xl text-hive-950 sm:text-2xl">
-					{finished ? '👑 View your honey' : done > 0 ? '▶ Return to the hive' : '▶ Enter the hive'}
-				</button>
+		<div class="-mt-2 sm:-mt-4">
+			<Bee3D size={150} />
+		</div>
 
-				<div class="mt-6 flex flex-wrap items-center justify-between gap-3 font-pixel text-xs text-honey-300/80">
-					<span>Hive #{puzzle} · {dateLabel}</span>
-					<div class="flex gap-3">
-						<button
-							class="pixel-box bg-hive-800 px-3 py-2 hover:text-honey-400"
-							style="--pb: var(--color-hive-600)"
-							onclick={() => (showHelp = true)}>How to play</button
-						>
-						{#if puzzleNumber(prevDate) >= 1}
-							<a
-								href="?date={prevDate}"
-								onclick={start}
-								class="pixel-box bg-hive-800 px-3 py-2 hover:text-honey-400"
-								style="--pb: var(--color-hive-600)">Archive ◀</a
-							>
-						{/if}
-					</div>
-				</div>
-			</div>
-		</main>
-	</div>
+		<p class="text-outline mt-2 font-retro text-lg tracking-[0.35em] text-[#7fe6ff] sm:text-xl">THE DAILY BUZZ</p>
+		<p class="text-outline mt-2 max-w-md text-sm font-bold text-lilac sm:text-base">
+			6 easy prompts · 30 seconds each · the twist decides your honey
+		</p>
+
+		<button onclick={start} class="btn-plastic mt-9 flex w-full max-w-sm items-center justify-center gap-3 rounded-full py-4 text-2xl">
+			<span class="cursor-blink" aria-hidden="true">▶</span>
+			{finished ? 'VIEW YOUR HONEY' : done > 0 ? 'CONTINUE' : 'PRESS START'}
+		</button>
+
+		<div class="mt-7 flex flex-wrap items-center justify-center gap-3">
+			<button class="btn-chrome rounded-full px-5 py-2 text-sm" onclick={() => (showHelp = true)}>HOW TO PLAY</button>
+			{#if puzzleNumber(prevDate) >= 1}
+				<a href="?date={prevDate}" onclick={start} class="btn-chrome rounded-full px-5 py-2 text-sm">◀ ARCHIVE</a>
+			{/if}
+		</div>
+		<p class="text-outline mt-6 font-retro text-sm tracking-widest text-lilac">
+			HIVE <span class="hud-num text-lg">#{puzzle}</span> · {dateLabel.toUpperCase()}
+		</p>
+	</main>
 {:else}
 	<!-- ───────────── Game ───────────── -->
-	<div class="flex min-h-screen flex-col">
-		<div class="relative">
-			<Scene showBee={false} />
-			<header class="absolute inset-x-0 top-0 flex items-start justify-between p-3 sm:p-4">
-				<button
-					class="pixel-box bg-hive-900/90 px-2 py-1 text-left"
-					style="--pb: var(--color-hive-950)"
-					onclick={() => (started = false)}
-					title="Back to title"
-				>
-					<span class="block font-pixel text-sm text-honey-400 sm:text-base">The Queen Bee</span>
-					<span class="block text-[11px] text-honey-200/70">#{puzzle} · {dateLabel}</span>
-				</button>
-				<div class="flex items-start gap-2">
-					<div class="pixel-box bg-hive-900/90 px-3 py-1 text-right" style="--pb: var(--color-hive-950)">
-						<span class="block font-pixel text-lg leading-tight text-honey-400 tabular-nums">{total}</span>
-						<span class="block text-[10px] text-honey-200/70 uppercase">honey</span>
-					</div>
-					<button
-						onclick={() => (showHelp = true)}
-						class="pixel-box grid h-10 w-10 place-items-center bg-hive-900/90 font-pixel text-honey-400"
-						style="--pb: var(--color-hive-950)"
-						aria-label="How to play">?</button
-					>
+	<div class="min-h-screen px-4 pt-4 pb-14">
+		<header class="flex items-start justify-between gap-3">
+			<button class="text-left" onclick={() => (started = false)} title="Back to title">
+				<span class="text-gold block font-retro text-lg leading-tight sm:text-xl">THE QUEEN BEE</span>
+				<span class="text-outline block text-xs font-bold tracking-wider text-lilac">
+					HIVE #{puzzle} · {dateLabel.toUpperCase()}
+				</span>
+			</button>
+			<div class="flex items-center gap-3">
+				<div class="flex items-center gap-1.5" aria-label="{total} drops of honey">
+					{@render honeyGem('h-9 w-8')}
+					<span class="hud-num text-3xl tabular-nums">×{String(total).padStart(3, '0')}</span>
 				</div>
-			</header>
-		</div>
+				<button
+					onclick={() => (showHelp = true)}
+					class="btn-chrome grid size-10 place-items-center rounded-full text-lg"
+					aria-label="How to play">?</button
+				>
+			</div>
+		</header>
 
-		<main class="hive flex-1 px-4 pt-4 pb-12">
-			<!-- archive navigation, tucked into the top-left corner -->
-			<div class="flex flex-wrap items-center gap-3 font-pixel text-xs text-honey-300/80">
-				{#if !isToday}
-					{#if puzzleNumber(prevDate) >= 1}<a href="?date={prevDate}" class="hover:text-honey-400">◀ Older</a>{/if}
-					<span class="text-honey-300/50">Archive hive</span>
-					<a href={nextDate === today ? '/' : `?date=${nextDate}`} class="hover:text-honey-400">Newer ▶</a>
-					<a href="/" class="text-honey-400 underline">Today</a>
-				{:else if puzzleNumber(prevDate) >= 1}
-					<a href="?date={prevDate}" class="hover:text-honey-400">◀ Play yesterday's hive</a>
+		<!-- archive navigation, tucked into the top-left corner -->
+		<nav class="text-outline mt-3 flex flex-wrap items-center gap-3 font-retro text-xs tracking-wider text-lilac" aria-label="Archive">
+			{#if !isToday}
+				{#if puzzleNumber(prevDate) >= 1}<a href="?date={prevDate}" class="hover:text-gold">◀ OLDER</a>{/if}
+				<span class="opacity-60">ARCHIVE HIVE</span>
+				<a href={nextDate === today ? '/' : `?date=${nextDate}`} class="hover:text-gold">NEWER ▶</a>
+				<a href="/" class="text-gold underline">TODAY</a>
+			{:else if puzzleNumber(prevDate) >= 1}
+				<a href="?date={prevDate}" class="hover:text-gold">◀ PLAY YESTERDAY'S HIVE</a>
+			{/if}
+		</nav>
+
+		<main class="mx-auto mt-2 max-w-xl">
+			<HoneyComb {questions} {results} current={showSummary ? null : current} onpick={go} {mood} bubble={speech} />
+
+			<section class="mt-8">
+				{#if showSummary && finished}
+					<Summary {questions} results={results as Result[]} {puzzle} {isToday} stats={loadStats(today)} />
+				{:else}
+					{#key `${date}-${current}`}
+						<QuestionCard
+							question={questions[current]}
+							number={current + 1}
+							result={results[current]}
+							onanswer={answer}
+							onnext={next}
+							onmessage={(t) => (override = t)}
+							isLast={finished}
+							{date}
+							paused={showHelp}
+						/>
+					{/key}
 				{/if}
-			</div>
+			</section>
 
-			<div class="mx-auto mt-2 max-w-xl">
-				<HoneyComb
-					{questions}
-					{results}
-					current={showSummary ? null : current}
-					onpick={go}
-					{mood}
-					bubble={speech}
-				/>
-
-				<section class="mt-8">
-					{#if showSummary && finished}
-						<Summary {questions} results={results as Result[]} {puzzle} {isToday} stats={loadStats(today)} />
-					{:else}
-						{#key `${date}-${current}`}
-							<QuestionCard
-								question={questions[current]}
-								number={current + 1}
-								result={results[current]}
-								onanswer={answer}
-								onnext={next}
-								onmessage={(t) => (override = t)}
-								isLast={finished}
-								{date}
-								paused={showHelp}
-							/>
-						{/key}
-					{/if}
-				</section>
-
-				<footer class="mt-10 text-center text-[11px] text-honey-200/40">
-					A new hive opens every day at midnight
-				</footer>
-			</div>
+			<footer class="text-outline mt-10 text-center font-retro text-xs tracking-widest text-lilac/80">
+				A NEW HIVE OPENS EVERY DAY AT MIDNIGHT
+			</footer>
 		</main>
 	</div>
 {/if}
 
 {#if showHelp}
 	<div
-		class="fixed inset-0 z-40 grid place-items-center bg-hive-950/80 p-4"
+		class="fixed inset-0 z-50 grid place-items-center bg-ink/70 p-4"
 		role="presentation"
 		onclick={(e) => e.target === e.currentTarget && closeHelp()}
 	>
-		<div class="pixel-box max-h-[90vh] w-full max-w-md overflow-y-auto bg-hive-800 p-6 sm:p-7" role="dialog" aria-modal="true" aria-labelledby="help-title">
-			<div class="flex items-center gap-3">
-				<QueenBee size={56} />
-				<h2 id="help-title" class="font-pixel text-2xl text-honey-400">How to play</h2>
+		<div class="window-rim w-full max-w-md" role="dialog" aria-modal="true" aria-labelledby="help-title">
+			<div class="window max-h-[85vh] overflow-y-auto px-6 py-6 sm:px-7">
+				<div class="flex items-center gap-3">
+					<Bee3D size={64} />
+					<h2 id="help-title" class="text-gold font-retro text-3xl">HOW TO PLAY</h2>
+				</div>
+				<p class="text-outline mt-4 text-sm font-bold text-white/95">
+					Every day Her Majesty sets <span class="text-gold">six easy prompts</span>, one each from Geography,
+					Sports, Movies/TV, History, Food and Science.
+				</p>
+				<p class="text-outline mt-3 text-sm font-bold text-white/95">
+					The catch: each one has a <span class="text-gold">twist</span>. Any real answer counts, but you earn
+					<span class="text-gold">0–100 drops of honey</span> depending on how well it fits the twist.
+				</p>
+				<div class="field mt-4 rounded-xl p-4 text-sm">
+					<p class="text-gold font-retro text-lg">Name a country</p>
+					<p class="tile mt-1 inline-block rounded-lg px-2 py-0.5 font-retro text-sm text-ink" style="--c:#ffc21e">
+						smaller is better
+					</p>
+					<ul class="mt-3 space-y-1 font-bold text-lilac">
+						<li>Russia → <span class="hud-num">1</span></li>
+						<li>France → <span class="hud-num">20</span></li>
+						<li>Singapore → <span class="hud-num">81</span></li>
+						<li>Vatican City → <span class="hud-num">100</span> 👑</li>
+					</ul>
+				</div>
+				<p class="text-outline mt-4 text-sm font-bold text-white/95">
+					You have <span class="text-gold">30 seconds</span> per cell. The hexagon next to the answer box counts down.
+					Run out of time and that cell scores 0. If the hive doesn't recognize an answer, just try another. Fill all
+					six cells for up to 600 honey.
+				</p>
+				<button onclick={closeHelp} class="btn-plastic mt-6 w-full rounded-full py-3 text-xl">LET'S BUZZ ▶</button>
 			</div>
-			<p class="mt-4 text-sm text-cream/90">
-				Every day Her Majesty sets <b class="text-honey-400">six easy prompts</b> — one each from Geography, Sports,
-				Movies/TV, History, Food and Science.
-			</p>
-			<p class="mt-3 text-sm text-cream/90">
-				The catch: each one has a <b class="text-honey-400">twist</b>. Any real answer counts, but you earn
-				<b class="text-honey-400">0–100 drops of honey</b> depending on how well it fits the twist.
-			</p>
-			<div class="mt-4 bg-hive-950 p-4 text-sm">
-				<p class="font-pixel text-cream">Name a country</p>
-				<p class="mt-1 inline-block bg-honey-400 px-1.5 font-pixel text-xs text-hive-950">smaller is better</p>
-				<ul class="mt-3 space-y-1 text-honey-200/80">
-					<li>Russia → <b class="text-cream">1</b></li>
-					<li>France → <b class="text-cream">20</b></li>
-					<li>Singapore → <b class="text-cream">81</b></li>
-					<li>Vatican City → <b class="text-honey-400">100</b> 👑</li>
-				</ul>
-			</div>
-			<p class="mt-4 text-sm text-cream/90">
-				You have <b class="text-honey-400">30 seconds</b> per cell — the hexagon next to the answer box counts down. Run out of time and that cell scores 0. If the hive doesn't recognize an answer, just try another — no sting. Fill all six cells for up to
-				600 honey.
-			</p>
-			<button onclick={closeHelp} class="pixel-btn mt-7 w-full bg-honey-500 py-3 text-lg text-hive-950">
-				Let's buzz
-			</button>
 		</div>
 	</div>
 {/if}

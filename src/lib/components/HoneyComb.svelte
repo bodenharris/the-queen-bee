@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { CATEGORY_STYLE } from '../game';
 	import type { Question, Result } from '../types';
-	import QueenBee from './QueenBee.svelte';
-	import PixelIcon from './PixelIcon.svelte';
+	import Bee3D from '../retro/Bee3D.svelte';
+	import CategoryIcon from '../retro/CategoryIcon.svelte';
 
 	let {
 		questions,
@@ -39,12 +39,13 @@
 
 <div class="comb relative flex flex-col items-center">
 	<nav class="hive-ring relative" aria-label="Today's six questions">
-		<!-- the queen's chamber -->
+		<!-- The queen's chamber: chrome rim, glass, and the 3D queen -->
 		<div class="cell absolute" style={pos([0, 0])}>
-			<span class="hex absolute inset-0 bg-honey-400"></span>
-			<span class="hex chamber absolute inset-[5px]"></span>
-			<span class="relative grid h-full place-items-center pt-1">
-				<QueenBee size={56} {mood} />
+			<span class="hex absolute inset-0 bg-ink"></span>
+			<span class="hex chrome absolute inset-[3px]"></span>
+			<span class="hex glass absolute inset-[8px]"></span>
+			<span class="relative grid h-full place-items-center">
+				<Bee3D size={72} {mood} />
 			</span>
 		</div>
 
@@ -55,22 +56,25 @@
 			<button
 				class="cell absolute"
 				class:active={i === current}
-				style={pos(RING[i])}
+				class:locked={!playable}
+				style="{pos(RING[i])} --c:{i === current ? '#ffd23e' : s.color}"
 				disabled={!playable}
 				onclick={() => onpick(i)}
 				title="{q.category}{r ? ` — ${r.score}` : ''}"
 				aria-label="{q.category}{r ? `, scored ${r.score}` : playable ? ', up next' : ', locked'}"
 			>
-				<span class="hex absolute inset-0" style="background:{i === current ? '#ffd84a' : s.color}"></span>
-				<span class="hex absolute inset-[5px] bg-hive-800"></span>
-				<span class="hex honey absolute inset-[5px]" style="--fill:{r ? r.score : 0}%"></span>
+				<span class="hex absolute inset-0 bg-ink"></span>
+				<span class="hex rim absolute inset-[3px]"></span>
+				<span class="hex glass absolute inset-[8px]"></span>
+				<span class="hex honey absolute inset-[8px]" style="--fill:{r ? r.score : 0}%"></span>
+				<span class="hex gloss absolute inset-[8px]"></span>
 				<span class="relative flex h-full flex-col items-center justify-center gap-0.5 leading-none">
-					<span class="icon"><PixelIcon category={q.category} size={24} dim={!playable} /></span>
-					<span class="font-pixel text-[8px] text-cream/80 uppercase [text-shadow:0_1px_0_#140c05] sm:text-[9px]">
+					<CategoryIcon category={q.category} size={30} dim={!playable} />
+					<span class="text-outline font-y2k text-[9px] font-extrabold tracking-wide uppercase sm:text-[10px]">
 						{q.category}
 					</span>
-					<span class="font-pixel text-sm text-cream [text-shadow:0_2px_0_#140c05] sm:text-base">
-						{r ? r.score : i === done ? '?' : '·'}
+					<span class="hud-num text-base sm:text-lg">
+						{r ? r.score : i === done ? '?' : ''}
 					</span>
 				</span>
 			</button>
@@ -79,23 +83,26 @@
 
 	{#if bubble}
 		{#key bubble}
-			<p class="speech pixel-box bg-cream px-4 py-2 font-mono text-sm leading-snug text-hive-950" aria-live="polite">
-				{bubble}
-			</p>
+			<div class="speech window-rim" aria-live="polite">
+				<p class="window text-outline px-4 py-3 pr-7 font-y2k text-sm leading-snug font-bold sm:text-base">
+					{bubble}
+					<span class="cursor-blink absolute right-4 bottom-2.5 text-xs text-gold" aria-hidden="true">▼</span>
+				</p>
+			</div>
 		{/key}
 	{/if}
 </div>
 
 <style>
 	.comb {
-		--w: 84px;
-		--gap: 6px;
+		--w: 88px;
+		--gap: 4px;
 		--h: calc(var(--w) * 1.1547);
 		--d: calc(var(--w) + var(--gap));
 	}
 	@media (min-width: 640px) {
 		.comb {
-			--w: 108px;
+			--w: 110px;
 		}
 	}
 	.hive-ring {
@@ -105,87 +112,83 @@
 	.cell {
 		width: var(--w);
 		height: var(--h);
-	}
-	.icon {
-		filter: drop-shadow(0 2px 0 #140c05);
-	}
-	@media (min-width: 640px) {
-		.icon :global(svg) {
-			width: 30px;
-			height: 30px;
-		}
+		filter: drop-shadow(0 5px 0 rgb(11 8 32 / 0.7));
 	}
 	.hex {
 		clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
 	}
-	.chamber {
-		background: radial-gradient(circle at 50% 45%, #5a3d1a, #2c1d0d 70%);
+	/* Candy plastic rim in the category colour */
+	.rim {
+		background:
+			linear-gradient(180deg, rgb(255 255 255 / 0.55) 0%, rgb(255 255 255 / 0.1) 40%, rgb(0 0 0 / 0.15) 60%, rgb(0 0 0 / 0.4) 100%),
+			var(--c);
 	}
+	.chrome {
+		background: linear-gradient(160deg, #ffffff 0%, #ffe39a 20%, #6a3a9a 45%, #fff2c8 60%, #c06a2a 80%, #ffffff 100%);
+	}
+	/* Recessed dark glass behind the honey */
+	.glass {
+		background: radial-gradient(ellipse at 50% 30%, #3a3aa8 0%, #1a1260 60%, #0c0838 100%);
+		box-shadow: inset 0 4px 8px rgb(0 0 0 / 0.7);
+	}
+	/* Honey fills from the bottom up to the score, with a bright surface line */
 	.honey {
-		background: linear-gradient(to top, #e8960c 0, #ffc928 var(--fill), transparent var(--fill));
+		background: linear-gradient(
+			to top,
+			#c25a00 0%,
+			#ffb21e calc(var(--fill) - 6%),
+			#fff0a0 calc(var(--fill) - 1%),
+			transparent var(--fill)
+		);
+	}
+	/* Glossy plastic highlight across the top half */
+	.gloss {
+		background: linear-gradient(180deg, rgb(255 255 255 / 0.35) 0%, rgb(255 255 255 / 0.05) 45%, transparent 50%);
+		pointer-events: none;
+	}
+	.cell.locked .rim {
+		filter: saturate(0.35) brightness(0.65);
 	}
 	button.cell:disabled {
 		cursor: default;
 	}
 	button.cell:not(:disabled):hover {
-		filter: brightness(1.15);
+		filter: drop-shadow(0 5px 0 rgb(11 8 32 / 0.7)) brightness(1.12);
 	}
 	button.cell.active {
-		animation: pulse 1.2s steps(2) infinite;
+		animation: bob 1.1s ease-in-out infinite;
 		z-index: 1;
+		filter: drop-shadow(0 5px 0 rgb(11 8 32 / 0.7)) drop-shadow(0 0 14px rgb(255 210 62 / 0.75));
 	}
-	@keyframes pulse {
+	@keyframes bob {
 		50% {
-			transform: scale(1.05);
+			transform: translateY(-5px);
 		}
 	}
+
+	/* N64 dialog box */
 	.speech {
-		--pb: var(--color-honey-400);
 		position: relative;
-		margin-top: 20px;
+		margin-top: 22px;
 		max-width: 24rem;
-		text-align: center;
-		animation: pop 0.25s steps(3);
+		animation: pop 0.2s ease-out;
 	}
-	/* Wide screens: bubble sits beside the hive, pointing left at it. */
+	.speech p {
+		position: relative;
+	}
 	@media (min-width: 900px) {
 		.speech {
 			position: absolute;
 			margin: 0;
 			top: 50%;
 			translate: 0 -50%;
-			left: calc(50% + var(--d) + var(--w) / 2 + 24px);
-			width: 15rem;
-			text-align: left;
+			left: calc(50% + var(--d) + var(--w) / 2 + 26px);
+			width: 16rem;
 		}
-		.speech::before {
-			left: -8px !important;
-			top: 50% !important;
-			margin: -4px 0 0 0 !important;
-			box-shadow:
-				0 -4px 0 var(--color-honey-400),
-				0 4px 0 var(--color-honey-400),
-				-4px 0 0 var(--color-honey-400) !important;
-		}
-	}
-	/* stepped pointer up toward the queen */
-	.speech::before {
-		content: '';
-		position: absolute;
-		left: 50%;
-		top: -8px;
-		width: 8px;
-		height: 8px;
-		margin-left: -4px;
-		background: var(--color-cream);
-		box-shadow:
-			-4px 0 0 var(--color-honey-400),
-			4px 0 0 var(--color-honey-400),
-			0 -4px 0 var(--color-honey-400);
 	}
 	@keyframes pop {
 		from {
-			transform: scale(0.7);
+			transform: scale(0.85);
 			opacity: 0;
 		}
 	}
