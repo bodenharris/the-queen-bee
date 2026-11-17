@@ -1,4 +1,4 @@
-# 👑🐝 The Queen Bee
+# The Queen Bee
 
 A daily trivia game with a twist, built with SvelteKit and Tailwind CSS.
 
