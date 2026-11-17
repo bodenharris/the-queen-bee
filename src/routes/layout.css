@@ -1,0 +1,115 @@
+@import 'tailwindcss';
+
+@theme {
+	--font-pixel: 'Silkscreen', ui-monospace, monospace;
+	--font-mono: 'Space Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+	--font-sans: 'Space Mono', ui-monospace, monospace;
+
+	--color-hive-950: #140c05;
+	--color-hive-900: #1f1409;
+	--color-hive-800: #2c1d0d;
+	--color-hive-700: #3d2912;
+	--color-hive-600: #5a3d1a;
+	--color-honey-200: #fff0bf;
+	--color-honey-300: #ffe08a;
+	--color-honey-400: #ffd84a;
+	--color-honey-500: #ffc928;
+	--color-honey-600: #e8960c;
+	--color-cream: #fffaf0;
+	--color-ruby: #e8365d;
+	--color-sapphire: #3fc6ff;
+
+	--animate-shake: shake 0.4s steps(4);
+
+	@keyframes shake {
+		0%,
+		100% {
+			transform: translateX(0);
+		}
+		25%,
+		75% {
+			transform: translateX(-6px);
+		}
+		50% {
+			transform: translateX(6px);
+		}
+	}
+}
+
+html,
+body {
+	background: var(--color-hive-950);
+	color: var(--color-cream);
+}
+
+/* The hive: a dark honeycomb wall */
+.hive {
+	background-color: var(--color-hive-900);
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath fill='none' stroke='%232c1d0d' stroke-width='3' d='M28 0l28 16v32L28 64 0 48V16zM28 64v33M0 16v-16M56 16v-16'/%3E%3C/svg%3E");
+	background-size: 56px 97px;
+}
+
+@layer components {
+/* Stepped, notched pixel border. Set --pb for the border colour. */
+.pixel-box {
+	--pb: var(--color-honey-500);
+	box-shadow:
+		0 -4px 0 0 var(--pb),
+		0 4px 0 0 var(--pb),
+		-4px 0 0 0 var(--pb),
+		4px 0 0 0 var(--pb);
+	margin: 4px;
+}
+
+.pixel-btn {
+	--pb: var(--color-honey-400);
+	font-family: var(--font-pixel);
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	box-shadow:
+		0 -4px 0 0 var(--pb),
+		0 4px 0 0 var(--pb),
+		-4px 0 0 0 var(--pb),
+		4px 0 0 0 var(--pb),
+		0 10px 0 0 rgb(0 0 0 / 0.45);
+	margin: 4px;
+	transition:
+		transform 60ms steps(1),
+		filter 60ms steps(1);
+}
+.pixel-btn:hover:not(:disabled) {
+	filter: brightness(1.12);
+}
+.pixel-btn:active:not(:disabled) {
+	transform: translateY(4px);
+}
+.pixel-btn:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+}
+
+/* Two-tone offset title */
+.title-glow {
+	font-family: var(--font-pixel);
+	color: var(--color-honey-400);
+	text-shadow:
+		-3px 0 0 var(--color-ruby),
+		3px 0 0 var(--color-sapphire),
+		0 6px 0 var(--color-hive-950);
+}
+
+/* CRT scanlines over everything */
+body::after {
+	content: '';
+	pointer-events: none;
+	position: fixed;
+	inset: 0;
+	z-index: 50;
+	background: repeating-linear-gradient(to bottom, rgb(0 0 0 / 0.07) 0 1px, transparent 1px 3px);
+}
+
+::selection {
+	background: var(--color-honey-400);
+	color: var(--color-hive-950);
+}
