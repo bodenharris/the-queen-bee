@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { CATEGORY_STYLE, beeVerdict, display, findAnswer, ranked, scoreAnswer } from '../game';
 	import type { Question, Result } from '../types';
-	import PixelIcon from './PixelIcon.svelte';
+	import CategoryIcon from '../retro/CategoryIcon.svelte';
 	import HexTimer from './HexTimer.svelte';
 	import { loadTimerStart, saveTimerStart } from '../storage';
 
@@ -142,98 +142,134 @@
 	}
 </script>
 
-<div class="pixel-box bg-hive-800 p-5 sm:p-7" style="--pb:{style.color}">
-	<div class="flex items-center justify-between gap-2 font-pixel text-xs sm:text-sm">
-		<span class="inline-flex items-center gap-2 px-2 py-1 text-hive-950" style="background:{style.color}">
-			<PixelIcon category={question.category} size={18} />
-			{question.category}
-		</span>
-		<span class="text-honey-300/70">Cell {number} / 6</span>
-	</div>
+<div class="window-rim">
+	<div class="window px-5 py-6 sm:px-7 sm:py-7">
+		<div class="flex items-center justify-between gap-2">
+			<span
+				class="tile inline-flex items-center gap-1.5 rounded-full py-1 pr-3 pl-1.5 font-retro text-sm tracking-wide text-white [text-shadow:0_2px_0_rgb(0_0_0/0.6)]"
+				style="--c:{style.color}"
+			>
+				<CategoryIcon category={question.category} size={26} />
+				{question.category}
+			</span>
+			<span class="text-outline font-retro text-sm tracking-wider text-lilac">
+				CELL <span class="hud-num text-lg">{number}</span>/6
+			</span>
+		</div>
 
-	<h2 class="mt-5 font-pixel text-2xl leading-tight text-cream sm:text-3xl">
-		{question.prompt}
-	</h2>
-	<p class="mt-3 inline-block bg-honey-400 px-2 py-1 font-pixel text-base text-hive-950 sm:text-lg">
-		{question.twist}
-	</p>
+		<h2 class="text-gold mt-6 font-retro text-3xl leading-tight sm:text-4xl">
+			{question.prompt}
+		</h2>
+		<p
+			class="tile mt-4 inline-block rounded-xl px-3.5 py-1.5 font-retro text-lg tracking-wide text-ink sm:text-xl"
+			style="--c:#ffc21e; text-shadow: 0 1px 0 rgb(255 255 255 / 0.6)"
+		>
+			{question.twist}
+		</p>
 
-	{#if !result}
-		<form class="mt-6" onsubmit={submit}>
-			<div class="flex flex-col gap-3 sm:flex-row sm:items-center" class:animate-shake={shake}>
-				<div class="flex min-w-0 flex-1 items-center gap-3">
-				<HexTimer {remaining} total={LIMIT} />
-				<input
-					bind:this={inputEl}
-					bind:value={input}
-					oninput={() => (message = '')}
-					placeholder="type your answer…"
-					autocomplete="off"
-					autocapitalize="off"
-					spellcheck="false"
-					aria-label="Your answer"
-					class="pixel-box min-w-0 flex-1 bg-hive-950 px-4 py-3 font-mono text-lg text-cream outline-none placeholder:text-honey-200/30 [--pb:var(--color-hive-600)] focus:[--pb:var(--color-honey-400)]"
-				/>
+		{#if !result}
+			<form class="mt-7" onsubmit={submit}>
+				<div class="flex flex-col gap-4 sm:flex-row sm:items-center" class:animate-shake={shake}>
+					<div class="flex min-w-0 flex-1 items-center gap-3">
+						<HexTimer {remaining} total={LIMIT} />
+						<input
+							bind:this={inputEl}
+							bind:value={input}
+							oninput={() => (message = '')}
+							placeholder="Enter your answer..."
+							autocomplete="off"
+							autocapitalize="off"
+							spellcheck="false"
+							aria-label="Your answer"
+							class="field min-w-0 flex-1 rounded-xl px-4 py-3 text-lg font-bold text-[#fff6a8] placeholder:text-dusk"
+						/>
+					</div>
+					<button class="btn-plastic rounded-full px-7 py-3 text-lg" disabled={!input.trim()}>LOCK IN</button>
 				</div>
-				<button class="pixel-btn bg-honey-500 px-6 py-3 text-base text-hive-950" disabled={!input.trim()}>
-					Lock in
+				{#if message}
+					<p class="text-outline mt-4 text-sm font-bold text-[#ff9ab0]" role="alert">{message}</p>
+				{/if}
+			</form>
+		{:else}
+			<div class="mt-7">
+				<div class="flex items-end justify-between gap-4">
+					<div class="min-w-0">
+						{#if !result.timedOut}<p class="text-outline font-retro text-xs tracking-widest text-lilac">YOU SAID</p>{/if}
+						<p class="text-outline truncate font-retro text-2xl text-white sm:text-3xl">{result.answer}</p>
+						{#if result.display}<p class="text-outline text-sm font-bold text-[#fff6a8]">{result.display}</p>{/if}
+					</div>
+					<div class="shrink-0 text-right">
+						<p class="hud-num text-6xl leading-none tabular-nums sm:text-7xl">{shown}</p>
+						{#if !result.timedOut}<p class="text-outline mt-1 font-retro text-sm text-gold">{verdict?.title}</p>{/if}
+					</div>
+				</div>
+
+				<!-- Segmented plastic meter -->
+				<div class="mt-6">
+					<div
+						class="meter flex gap-[3px] rounded-full p-[3px]"
+						role="meter"
+						aria-valuenow={result.score}
+						aria-valuemin={0}
+						aria-valuemax={100}
+						aria-label="Score"
+					>
+						{#each Array(SEGMENTS) as _, i (i)}
+							{@const lit = (i + 1) * (100 / SEGMENTS) <= shown + 100 / SEGMENTS / 2}
+							<span
+								class="seg h-4 flex-1 first:rounded-l-full last:rounded-r-full"
+								class:lit
+								style="--c:hsl({10 + i * 2.6} 100% {52 + i * 0.5}%)"
+							></span>
+						{/each}
+					</div>
+					<div class="text-outline mt-2 flex justify-between gap-4 text-xs font-bold text-lilac">
+						<span>1 · {worst.name}</span>
+						<span class="text-right">{best.name} · 100</span>
+					</div>
+				</div>
+
+				{#if !result.timedOut}
+					<p class="text-outline mt-4 text-sm font-bold text-lilac">
+						Ranked <span class="hud-num text-base">#{result.rank}</span> of {result.total} answers in the royal records.
+					</p>
+				{/if}
+
+				<details class="field mt-5 rounded-xl px-4 py-3 text-sm">
+					<summary class="cursor-pointer font-retro tracking-wide text-gold">TOP ANSWERS</summary>
+					<ol class="mt-3 space-y-1 font-bold">
+						{#each order.slice(0, 5) as a, i (a.name)}
+							<li class="flex justify-between gap-4 {a.name === result.answer ? 'text-gold' : 'text-white/85'}">
+								<span>{i + 1}. {a.name}</span>
+								<span class="text-right text-lilac/80">{display(question, a)}</span>
+							</li>
+						{/each}
+					</ol>
+				</details>
+
+				<button onclick={onnext} class="btn-plastic mt-7 w-full rounded-full py-4 text-xl">
+					{isLast ? 'SEE YOUR HONEY ▶' : 'NEXT CELL ▶'}
 				</button>
 			</div>
-			{#if message}
-				<p class="mt-4 text-sm text-ruby" role="alert">{message}</p>
-			{/if}		</form>
-	{:else}
-		<div class="mt-6">
-			<div class="flex items-end justify-between gap-4">
-				<div class="min-w-0">
-					{#if !result.timedOut}<p class="font-pixel text-xs text-honey-200/60">You said</p>{/if}
-					<p class="truncate font-pixel text-xl text-cream sm:text-2xl">{result.answer}</p>
-					{#if result.display}<p class="text-sm text-honey-200/80">{result.display}</p>{/if}
-				</div>
-				<div class="shrink-0 text-right">
-					<p class="title-glow text-5xl tabular-nums sm:text-6xl">{shown}</p>
-					{#if !result.timedOut}<p class="font-pixel text-xs text-honey-300">{verdict?.title}</p>{/if}
-				</div>
-			</div>
-
-			<!-- pixel meter -->
-			<div class="mt-6">
-				<div class="flex gap-[3px]" role="meter" aria-valuenow={result.score} aria-valuemin={0} aria-valuemax={100} aria-label="Score">
-					{#each Array(SEGMENTS) as _, i (i)}
-						{@const lit = (i + 1) * (100 / SEGMENTS) <= shown + 100 / SEGMENTS / 2}
-						<span
-							class="h-4 flex-1"
-							style="background:{lit ? `hsl(${30 + i * 1.6} 100% ${50 + i * 0.6}%)` : '#3d2912'}"
-						></span>
-					{/each}
-				</div>
-				<div class="mt-2 flex justify-between gap-4 text-[11px] text-honey-200/60 sm:text-xs">
-					<span>1 · {worst.name}</span>
-					<span class="text-right">{best.name} · 100</span>
-				</div>
-			</div>
-
-			{#if !result.timedOut}
-				<p class="mt-4 text-sm text-honey-200/80">
-					Ranked <b class="text-honey-400">#{result.rank}</b> of {result.total} answers in the royal records.
-				</p>
-			{/if}
-
-			<details class="pixel-box mt-5 bg-hive-900 p-4 text-sm" style="--pb: var(--color-hive-600)">
-				<summary class="cursor-pointer font-pixel text-xs text-honey-300">Top answers</summary>
-				<ol class="mt-3 space-y-1">
-					{#each order.slice(0, 5) as a, i (a.name)}
-						<li class="flex justify-between gap-4 {a.name === result.answer ? 'text-honey-400' : 'text-cream/80'}">
-							<span>{i + 1}. {a.name}</span>
-							<span class="text-right text-honey-200/50">{display(question, a)}</span>
-						</li>
-					{/each}
-				</ol>
-			</details>
-
-			<button onclick={onnext} class="pixel-btn mt-7 w-full bg-honey-500 py-4 text-lg text-hive-950">
-				{isLast ? '👑 See your honey' : 'Next cell ▶'}
-			</button>
-		</div>
-	{/if}
+		{/if}
+	</div>
 </div>
+
+<style>
+	.meter {
+		background: linear-gradient(180deg, #05041c, #17124f);
+		box-shadow:
+			inset 0 2px 4px rgb(0 0 0 / 0.8),
+			0 0 0 2px var(--color-ink);
+	}
+	.seg {
+		background: #2a2470;
+		box-shadow: inset 0 -2px 0 rgb(0 0 0 / 0.35);
+	}
+	.seg.lit {
+		background:
+			linear-gradient(180deg, rgb(255 255 255 / 0.6) 0%, rgb(255 255 255 / 0.1) 45%, rgb(0 0 0 / 0.2) 100%),
+			var(--c);
+		box-shadow: 0 0 6px var(--c);
+	}
+</style>

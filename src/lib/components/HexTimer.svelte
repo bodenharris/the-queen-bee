@@ -9,41 +9,58 @@
 
 <div
 	class="timer relative shrink-0"
+	class:danger
 	class:critical
 	role="timer"
 	aria-label="{secs} seconds left"
 	title="{secs} seconds left"
 >
-	<span class="hex absolute inset-0" style="background:{danger ? '#e8365d' : '#ffd84a'}"></span>
-	<span class="hex absolute inset-[4px] bg-hive-950"></span>
-	<span
-		class="hex absolute inset-[4px]"
-		style="background: linear-gradient(to top, {danger ? '#b3243f' : '#e8960c'} 0, {danger
-			? '#e8365d'
-			: '#ffc928'} {fill}%, transparent {fill}%)"
-	></span>
-	<span
-		class="relative grid h-full place-items-center font-pixel text-xl text-cream tabular-nums [text-shadow:0_2px_0_#140c05]"
-		aria-hidden="true"
-	>
-		{secs}
-	</span>
+	<span class="hex absolute inset-0 bg-ink"></span>
+	<span class="hex chrome absolute inset-[3px]"></span>
+	<span class="hex glass absolute inset-[7px]"></span>
+	<span class="hex liquid absolute inset-[7px]" style="--fill:{fill}%"></span>
+	<span class="hex gloss absolute inset-[7px]"></span>
+	<span class="hud-num relative grid h-full place-items-center text-2xl tabular-nums" aria-hidden="true">{secs}</span>
 </div>
 
 <style>
 	.timer {
-		width: 56px;
-		height: 64px;
+		width: 60px;
+		height: 69px;
+		filter: drop-shadow(0 4px 0 rgb(11 8 32 / 0.7));
 	}
 	.hex {
 		clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
 	}
+	.chrome {
+		background: linear-gradient(160deg, #ffffff 0%, #ffe39a 20%, #6a3a9a 45%, #fff2c8 60%, #c06a2a 80%, #ffffff 100%);
+	}
+	.glass {
+		background: radial-gradient(ellipse at 50% 30%, #3a3aa8 0%, #1a1260 60%, #0c0838 100%);
+	}
+	.liquid {
+		--top: #fff0a0;
+		--mid: #ffb21e;
+		--low: #c25a00;
+		background: linear-gradient(to top, var(--low) 0%, var(--mid) calc(var(--fill) - 6%), var(--top) calc(var(--fill) - 1%), transparent var(--fill));
+	}
+	.danger .liquid {
+		--top: #ffc0cc;
+		--mid: #ff3d6a;
+		--low: #8a0a2a;
+	}
+	.danger .chrome {
+		background: linear-gradient(160deg, #ffffff 0%, #ffb0c0 20%, #8a1a3a 45%, #ffd0da 60%, #c02a4a 80%, #ffffff 100%);
+	}
+	.gloss {
+		background: linear-gradient(180deg, rgb(255 255 255 / 0.35) 0%, rgb(255 255 255 / 0.05) 45%, transparent 50%);
+	}
 	.critical {
-		animation: throb 0.5s steps(2) infinite;
+		animation: throb 0.5s ease-in-out infinite;
 	}
 	@keyframes throb {
 		50% {
-			transform: scale(1.08);
+			transform: scale(1.1);
 		}
 	}
 	@media (prefers-reduced-motion: reduce) {
