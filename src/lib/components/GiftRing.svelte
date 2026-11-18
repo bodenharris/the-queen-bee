@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { CATEGORY_STYLE } from '../game';
 	import type { Question, Result } from '../types';
-	import Bee3D from '../retro/Bee3D.svelte';
+	import Elf3D from '../retro/Elf3D.svelte';
 	import CategoryIcon from '../retro/CategoryIcon.svelte';
 
 	let {
@@ -37,15 +37,15 @@
 		`left: calc(50% + ${x} * var(--d) - var(--w) / 2); top: calc(50% + ${y} * var(--d) - var(--h) / 2);`;
 </script>
 
-<div class="comb relative flex flex-col items-center">
-	<nav class="hive-ring relative" aria-label="Today's six questions">
-		<!-- The queen's chamber: chrome rim, glass, and the 3D queen -->
+<div class="gift-wrap relative flex flex-col items-center">
+	<nav class="gift-ring relative" aria-label="Today's six questions">
+		<!-- The queen's throne: chrome rim, glass, and the 3D Elf Queen -->
 		<div class="cell absolute" style={pos([0, 0])}>
 			<span class="hex absolute inset-0 bg-ink"></span>
 			<span class="hex chrome absolute inset-[3px]"></span>
 			<span class="hex glass absolute inset-[8px]"></span>
 			<span class="relative grid h-full place-items-center">
-				<Bee3D size={72} {mood} />
+				<Elf3D size={72} {mood} />
 			</span>
 		</div>
 
@@ -66,7 +66,7 @@
 				<span class="hex absolute inset-0 bg-ink"></span>
 				<span class="hex rim absolute inset-[3px]"></span>
 				<span class="hex glass absolute inset-[8px]"></span>
-				<span class="hex honey absolute inset-[8px]" style="--fill:{r ? r.score : 0}%"></span>
+				<span class="hex cheer absolute inset-[8px]" style="--fill:{r ? r.score : 0}%"></span>
 				<span class="hex gloss absolute inset-[8px]"></span>
 				<span class="relative flex h-full flex-col items-center justify-center gap-0.5 leading-none">
 					<CategoryIcon category={q.category} size={30} dim={!playable} />
@@ -94,25 +94,25 @@
 </div>
 
 <style>
-	.comb {
+	.gift-wrap {
 		--w: 88px;
 		--gap: 4px;
 		--h: calc(var(--w) * 1.1547);
 		--d: calc(var(--w) + var(--gap));
 	}
 	@media (min-width: 640px) {
-		.comb {
+		.gift-wrap {
 			--w: 110px;
 		}
 	}
-	.hive-ring {
+	.gift-ring {
 		width: calc(2 * var(--d) + var(--w));
 		height: calc(1.7321 * var(--d) + var(--h));
 	}
 	.cell {
 		width: var(--w);
 		height: var(--h);
-		filter: drop-shadow(0 5px 0 rgb(11 8 32 / 0.7));
+		filter: drop-shadow(0 5px 0 rgb(26 13 8 / 0.7));
 	}
 	.hex {
 		clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
@@ -124,15 +124,15 @@
 			var(--c);
 	}
 	.chrome {
-		background: linear-gradient(160deg, #ffffff 0%, #ffe39a 20%, #6a3a9a 45%, #fff2c8 60%, #c06a2a 80%, #ffffff 100%);
+		background: linear-gradient(160deg, #ffffff 0%, #ffe39a 20%, #7a3418 45%, #fff2c8 60%, #a8481e 80%, #ffffff 100%);
 	}
-	/* Recessed dark glass behind the honey */
+	/* Recessed dark glass behind the cheer */
 	.glass {
-		background: radial-gradient(ellipse at 50% 30%, #3a3aa8 0%, #1a1260 60%, #0c0838 100%);
+		background: radial-gradient(ellipse at 50% 30%, #1f6a50 0%, #10392c 60%, #081f19 100%);
 		box-shadow: inset 0 4px 8px rgb(0 0 0 / 0.7);
 	}
-	/* Honey fills from the bottom up to the score, with a bright surface line */
-	.honey {
+	/* Golden cheer fills from the bottom up to the score, with a bright surface line */
+	.cheer {
 		background: linear-gradient(
 			to top,
 			#c25a00 0%,
@@ -153,12 +153,12 @@
 		cursor: default;
 	}
 	button.cell:not(:disabled):hover {
-		filter: drop-shadow(0 5px 0 rgb(11 8 32 / 0.7)) brightness(1.12);
+		filter: drop-shadow(0 5px 0 rgb(26 13 8 / 0.7)) brightness(1.12);
 	}
 	button.cell.active {
 		animation: bob 1.1s ease-in-out infinite;
 		z-index: 1;
-		filter: drop-shadow(0 5px 0 rgb(11 8 32 / 0.7)) drop-shadow(0 0 14px rgb(255 210 62 / 0.75));
+		filter: drop-shadow(0 5px 0 rgb(26 13 8 / 0.7)) drop-shadow(0 0 14px rgb(255 210 62 / 0.75));
 	}
 	@keyframes bob {
 		50% {

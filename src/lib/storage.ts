@@ -1,6 +1,7 @@
 import type { Result } from './types';
 import { todayKey } from './game';
 
+// Kept from the game's original name so existing progress and streaks carry over.
 const PREFIX = 'queen-bee:';
 
 function read<T>(key: string, fallback: T): T {

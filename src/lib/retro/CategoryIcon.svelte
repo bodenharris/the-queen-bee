@@ -26,10 +26,10 @@
 	/* Soft bilinear upscale + a hard drop shadow, like a pre-rendered sprite */
 	.icon {
 		image-rendering: auto;
-		filter: drop-shadow(0 2px 0 rgb(11 8 32 / 0.8));
+		filter: drop-shadow(0 2px 0 rgb(26 13 8 / 0.8));
 	}
 	.icon.dim {
 		opacity: 0.4;
-		filter: grayscale(1) drop-shadow(0 2px 0 rgb(11 8 32 / 0.8));
+		filter: grayscale(1) drop-shadow(0 2px 0 rgb(26 13 8 / 0.8));
 	}
 </style>

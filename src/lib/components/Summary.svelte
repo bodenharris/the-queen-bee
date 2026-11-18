@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CATEGORY_STYLE, hiveRank, scoreSquare } from '../game';
+	import { CATEGORY_STYLE, elfRank, scoreSquare } from '../game';
 	import type { Question, Result } from '../types';
 	import CategoryIcon from '../retro/CategoryIcon.svelte';
 
@@ -40,7 +40,7 @@
 			const r = results[i];
 			return `${CATEGORY_STYLE[q.category].emoji} ${scoreSquare(r.score)} ${r.score}`;
 		});
-		return `👑🐝 The Queen Bee #${puzzle}\n${total}/600 · ${hiveRank(total)}\n${lines.join('\n')}`;
+		return `👑🧝 The Elf Queen #${puzzle}\n${total}/600 · ${elfRank(total)}\n${lines.join('\n')}`;
 	}
 
 	async function share() {
@@ -57,14 +57,14 @@
 
 <div class="window-rim">
 	<div class="window px-5 py-7 sm:px-7">
-		<p class="text-outline text-center font-retro text-sm tracking-[0.2em] text-lilac">
-			HIVE #{puzzle} · HARVEST COMPLETE
+		<p class="text-outline text-center font-retro text-sm tracking-[0.2em] text-cream">
+			WORKSHOP #{puzzle} · ALL GIFTS WRAPPED
 		</p>
 		<p class="hud-num mt-3 text-center text-8xl leading-none tabular-nums">{total}</p>
-		<p class="text-outline mt-2 text-center text-sm font-bold text-lilac">drops of honey out of 600</p>
+		<p class="text-outline mt-2 text-center text-sm font-bold text-cream">Christmas cheer out of 600</p>
 		<p class="mt-5 text-center">
 			<span class="tile inline-block rounded-full px-5 py-1.5 font-retro text-xl text-ink" style="--c:#ffc21e; text-shadow:0 1px 0 rgb(255 255 255/0.6)">
-				{hiveRank(total)}
+				{elfRank(total)}
 			</span>
 		</p>
 
@@ -89,21 +89,21 @@
 		</ul>
 
 		<button onclick={share} class="btn-plastic mt-8 w-full rounded-full py-4 text-xl">
-			{copied ? 'COPIED! 🐝' : 'SHARE YOUR HONEY'}
+			{copied ? 'COPIED! 🧝' : 'SHARE YOUR CHEER'}
 		</button>
 
 		<div class="mt-7 grid grid-cols-4 gap-2 text-center">
 			{#each [['Played', stats.played], ['Average', stats.average], ['Best', stats.best], ['Streak', stats.streak]] as [label, value] (label)}
 				<div class="field rounded-xl py-3">
 					<p class="hud-num text-2xl sm:text-3xl">{value}</p>
-					<p class="text-[10px] font-bold tracking-wider text-lilac uppercase sm:text-xs">{label}</p>
+					<p class="text-[10px] font-bold tracking-wider text-cream uppercase sm:text-xs">{label}</p>
 				</div>
 			{/each}
 		</div>
 
 		{#if isToday}
-			<p class="text-outline mt-6 text-center font-retro text-sm tracking-wide text-lilac">
-				NEW HIVE OPENS IN <span class="hud-num text-lg">{countdown}</span>
+			<p class="text-outline mt-6 text-center font-retro text-sm tracking-wide text-cream">
+				NEW GIFTS ARRIVE IN <span class="hud-num text-lg">{countdown}</span>
 			</p>
 		{/if}
 	</div>

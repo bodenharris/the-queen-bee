@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { beeVerdict, dailyQuestions, hiveRank, puzzleNumber, todayKey } from '../lib/game';
+	import { elfVerdict, dailyQuestions, elfRank, puzzleNumber, todayKey } from '../lib/game';
 	import {
 		hasSeenHelp,
 		loadDay,
@@ -13,8 +13,8 @@
 	import QuestionCard from '../lib/components/QuestionCard.svelte';
 	import Summary from '../lib/components/Summary.svelte';
 	import Logo3D from '../lib/retro/Logo3D.svelte';
-	import HoneyComb from '../lib/components/HoneyComb.svelte';
-	import Bee3D from '../lib/retro/Bee3D.svelte';
+	import GiftRing from '../lib/components/GiftRing.svelte';
+	import Elf3D from '../lib/retro/Elf3D.svelte';
 
 	const today = todayKey();
 	const requested = $derived(page.url.searchParams.get('date'));
@@ -89,17 +89,17 @@
 	// What Her Majesty is saying right now.
 	const speech = $derived.by(() => {
 		if (!started) return '';
-		if (showSummary && finished) return `${total} drops of honey! You are a true ${hiveRank(total).replace(' 👑', '')}.`;
+		if (showSummary && finished) return `${total} Christmas cheer! You are a true ${elfRank(total).replace(' 👑', '')}.`;
 		if (override) return override;
 		const r = results[current];
-		if (r) return r.timedOut ? 'Too slow, darling! The nectar dried up — no honey for that one.' : beeVerdict(r.score).line;
+		if (r) return r.timedOut ? 'Too slow, darling! The sleigh left without that one.' : elfVerdict(r.score).line;
 		return '';
 	});
 	const mood = $derived.by(() => {
 		if (!started) return 'idle' as const;
 		if (showSummary && finished) return total >= 350 ? ('happy' as const) : ('idle' as const);
 		const r = results[current];
-		return r ? beeVerdict(r.score).mood : ('idle' as const);
+		return r ? elfVerdict(r.score).mood : ('idle' as const);
 	});
 
 	const dateLabel = $derived(
@@ -112,65 +112,69 @@
 </script>
 
 <svelte:head>
-	<title>The Queen Bee — daily trivia with a twist</title>
+	<title>The Elf Queen — daily trivia with a twist</title>
 </svelte:head>
 
-{#snippet honeyGem(cls: string)}
-	<!-- Flat-shaded honey drop pickup -->
-	<svg viewBox="0 0 40 48" class={cls} aria-hidden="true">
-		<polygon points="20,2 8,28 20,30" fill="#fff3a0" />
-		<polygon points="20,2 32,28 20,30" fill="#ffc21e" />
-		<polygon points="8,28 20,46 20,30" fill="#e08a00" />
-		<polygon points="32,28 20,46 20,30" fill="#9a4a00" />
-		<polygon points="20,2 8,28 20,46 32,28" fill="none" stroke="#0b0820" stroke-width="2.5" stroke-linejoin="round" />
+{#snippet cheerStar(cls: string)}
+	<!-- Flat-shaded gold star pickup -->
+	<svg viewBox="0 0 40 40" class={cls} aria-hidden="true">
+		<polygon points="20,2 25,15 20,20 15,15" fill="#fff3a0" />
+		<polygon points="38,15 28,24 20,20 25,15" fill="#ffc21e" />
+		<polygon points="31,37 20,30 20,20 28,24" fill="#c46a00" />
+		<polygon points="9,37 12,24 20,20 20,30" fill="#e08a00" />
+		<polygon points="2,15 15,15 20,20 12,24" fill="#ffe066" />
+		<polygon points="20,2 25,15 38,15 28,24 31,37 20,30 9,37 12,24 2,15 15,15" fill="none" stroke="#1a0d08" stroke-width="2.5" stroke-linejoin="round" />
 	</svg>
 {/snippet}
 
 {#if !started}
 	<!-- ───────────── Title screen ───────────── -->
-	<main class="flex min-h-screen flex-col items-center px-4 pt-6 pb-16 text-center sm:pt-10">
+	<main class="flex min-h-screen flex-col items-center px-4 pt-5 pb-4 text-center sm:pt-7">
 		<div class="w-full max-w-2xl">
 			<p class="text-gold font-retro text-2xl tracking-[0.4em] sm:text-3xl">THE</p>
-			<Logo3D text="QUEEN BEE" label="The Queen Bee" />
+			<Logo3D text="ELF QUEEN" label="The Elf Queen" />
 		</div>
 
-		<div class="-mt-2 sm:-mt-4">
-			<Bee3D size={150} />
+		<div class="-mt-3 sm:-mt-6">
+			<Elf3D size={124} />
 		</div>
 
-		<p class="text-outline mt-2 font-retro text-lg tracking-[0.35em] text-[#7fe6ff] sm:text-xl">THE DAILY BUZZ</p>
-		<p class="text-outline mt-2 max-w-md text-sm font-bold text-lilac sm:text-base">
-			6 easy prompts · 30 seconds each · the twist decides your honey
-		</p>
+		<!-- Pinned to the bottom so the fire stays visible in the middle of the screen -->
+		<div class="mt-auto flex w-full flex-col items-center pt-44">
+			<p class="text-outline font-retro text-lg tracking-[0.35em] text-[#7fe6ff] sm:text-xl">THE DAILY JINGLE</p>
+			<p class="text-outline mt-1 max-w-xl text-sm font-bold text-cream sm:text-base">
+				6 easy prompts · 30 seconds each · the twist decides your cheer
+			</p>
 
-		<button onclick={start} class="btn-plastic mt-9 flex w-full max-w-sm items-center justify-center gap-3 rounded-full py-4 text-2xl">
-			<span class="cursor-blink" aria-hidden="true">▶</span>
-			{finished ? 'VIEW YOUR HONEY' : done > 0 ? 'CONTINUE' : 'PRESS START'}
-		</button>
+			<button onclick={start} class="btn-plastic mt-4 flex w-full max-w-sm items-center justify-center gap-3 rounded-full py-3.5 text-2xl">
+				<span class="cursor-blink" aria-hidden="true">▶</span>
+				{finished ? 'VIEW YOUR CHEER' : done > 0 ? 'CONTINUE' : 'PRESS START'}
+			</button>
 
-		<div class="mt-7 flex flex-wrap items-center justify-center gap-3">
-			<button class="btn-chrome rounded-full px-5 py-2 text-sm" onclick={() => (showHelp = true)}>HOW TO PLAY</button>
-			{#if puzzleNumber(prevDate) >= 1}
-				<a href="?date={prevDate}" onclick={start} class="btn-chrome rounded-full px-5 py-2 text-sm">◀ ARCHIVE</a>
-			{/if}
+			<div class="mt-5 flex flex-wrap items-center justify-center gap-3">
+				<button class="btn-chrome rounded-full px-5 py-2 text-sm" onclick={() => (showHelp = true)}>HOW TO PLAY</button>
+				{#if puzzleNumber(prevDate) >= 1}
+					<a href="?date={prevDate}" onclick={start} class="btn-chrome rounded-full px-5 py-2 text-sm">◀ ARCHIVE</a>
+				{/if}
+				<p class="text-outline font-retro text-sm tracking-widest text-cream">
+					WORKSHOP <span class="hud-num text-lg">#{puzzle}</span> · {dateLabel.toUpperCase()}
+				</p>
+			</div>
 		</div>
-		<p class="text-outline mt-6 font-retro text-sm tracking-widest text-lilac">
-			HIVE <span class="hud-num text-lg">#{puzzle}</span> · {dateLabel.toUpperCase()}
-		</p>
 	</main>
 {:else}
 	<!-- ───────────── Game ───────────── -->
 	<div class="min-h-screen px-4 pt-4 pb-14">
 		<header class="flex items-start justify-between gap-3">
 			<button class="text-left" onclick={() => (started = false)} title="Back to title">
-				<span class="text-gold block font-retro text-lg leading-tight sm:text-xl">THE QUEEN BEE</span>
-				<span class="text-outline block text-xs font-bold tracking-wider text-lilac">
-					HIVE #{puzzle} · {dateLabel.toUpperCase()}
+				<span class="text-gold block font-retro text-lg leading-tight sm:text-xl">THE ELF QUEEN</span>
+				<span class="text-outline block text-xs font-bold tracking-wider text-cream">
+					#{puzzle} · {dateLabel.toUpperCase()}
 				</span>
 			</button>
 			<div class="flex items-center gap-3">
-				<div class="flex items-center gap-1.5" aria-label="{total} drops of honey">
-					{@render honeyGem('h-9 w-8')}
+				<div class="flex items-center gap-1.5" aria-label="{total} Christmas cheer">
+					{@render cheerStar('h-9 w-9')}
 					<span class="hud-num text-3xl tabular-nums">×{String(total).padStart(3, '0')}</span>
 				</div>
 				<button
@@ -182,19 +186,19 @@
 		</header>
 
 		<!-- archive navigation, tucked into the top-left corner -->
-		<nav class="text-outline mt-3 flex flex-wrap items-center gap-3 font-retro text-xs tracking-wider text-lilac" aria-label="Archive">
+		<nav class="text-outline mt-3 flex flex-wrap items-center gap-3 font-retro text-xs tracking-wider text-cream" aria-label="Archive">
 			{#if !isToday}
 				{#if puzzleNumber(prevDate) >= 1}<a href="?date={prevDate}" class="hover:text-gold">◀ OLDER</a>{/if}
-				<span class="opacity-60">ARCHIVE HIVE</span>
+				<span class="opacity-60">ARCHIVE WORKSHOP</span>
 				<a href={nextDate === today ? '/' : `?date=${nextDate}`} class="hover:text-gold">NEWER ▶</a>
 				<a href="/" class="text-gold underline">TODAY</a>
 			{:else if puzzleNumber(prevDate) >= 1}
-				<a href="?date={prevDate}" class="hover:text-gold">◀ PLAY YESTERDAY'S HIVE</a>
+				<a href="?date={prevDate}" class="hover:text-gold">◀ PLAY YESTERDAY'S GIFTS</a>
 			{/if}
 		</nav>
 
 		<main class="mx-auto mt-2 max-w-xl">
-			<HoneyComb {questions} {results} current={showSummary ? null : current} onpick={go} {mood} bubble={speech} />
+			<GiftRing {questions} {results} current={showSummary ? null : current} onpick={go} {mood} bubble={speech} />
 
 			<section class="mt-8">
 				{#if showSummary && finished}
@@ -216,8 +220,8 @@
 				{/if}
 			</section>
 
-			<footer class="text-outline mt-10 text-center font-retro text-xs tracking-widest text-lilac/80">
-				A NEW HIVE OPENS EVERY DAY AT MIDNIGHT
+			<footer class="text-outline mt-10 text-center font-retro text-xs tracking-widest text-cream/80">
+				NEW GIFTS ARRIVE EVERY DAY AT MIDNIGHT
 			</footer>
 		</main>
 	</div>
@@ -232,7 +236,7 @@
 		<div class="window-rim w-full max-w-md" role="dialog" aria-modal="true" aria-labelledby="help-title">
 			<div class="window max-h-[85vh] overflow-y-auto px-6 py-6 sm:px-7">
 				<div class="flex items-center gap-3">
-					<Bee3D size={64} />
+					<Elf3D size={64} />
 					<h2 id="help-title" class="text-gold font-retro text-3xl">HOW TO PLAY</h2>
 				</div>
 				<p class="text-outline mt-4 text-sm font-bold text-white/95">
@@ -241,14 +245,14 @@
 				</p>
 				<p class="text-outline mt-3 text-sm font-bold text-white/95">
 					The catch: each one has a <span class="text-gold">twist</span>. Any real answer counts, but you earn
-					<span class="text-gold">0–100 drops of honey</span> depending on how well it fits the twist.
+					<span class="text-gold">0–100 Christmas cheer</span> depending on how well it fits the twist.
 				</p>
 				<div class="field mt-4 rounded-xl p-4 text-sm">
 					<p class="text-gold font-retro text-lg">Name a country</p>
 					<p class="tile mt-1 inline-block rounded-lg px-2 py-0.5 font-retro text-sm text-ink" style="--c:#ffc21e">
 						smaller is better
 					</p>
-					<ul class="mt-3 space-y-1 font-bold text-lilac">
+					<ul class="mt-3 space-y-1 font-bold text-cream">
 						<li>Russia → <span class="hud-num">1</span></li>
 						<li>France → <span class="hud-num">20</span></li>
 						<li>Singapore → <span class="hud-num">81</span></li>
@@ -256,11 +260,11 @@
 					</ul>
 				</div>
 				<p class="text-outline mt-4 text-sm font-bold text-white/95">
-					You have <span class="text-gold">30 seconds</span> per cell. The hexagon next to the answer box counts down.
-					Run out of time and that cell scores 0. If the hive doesn't recognize an answer, just try another. Fill all
-					six cells for up to 600 honey.
+					You have <span class="text-gold">30 seconds</span> per gift. The hexagon next to the answer box counts down.
+					Run out of time and that gift scores 0. If the workshop doesn't recognize an answer, just try another. Fill all
+					six gifts for up to 600 cheer.
 				</p>
-				<button onclick={closeHelp} class="btn-plastic mt-6 w-full rounded-full py-3 text-xl">LET'S BUZZ ▶</button>
+				<button onclick={closeHelp} class="btn-plastic mt-6 w-full rounded-full py-3 text-xl">LET'S JINGLE ▶</button>
 			</div>
 		</div>
 	</div>

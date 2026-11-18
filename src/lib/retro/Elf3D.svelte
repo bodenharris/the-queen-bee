@@ -1,22 +1,22 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import * as THREE from 'three';
-	import { flap, makeBee } from './models';
+	import { animateElf, makeElf } from './models';
 
 	/**
-	 * The Queen Bee as a low-poly 3D model. Rendered at half resolution so the
-	 * polygons stay chunky. Moods: idle (bob and sway), happy (twirl and hop),
+	 * The Elf Queen as a low-poly 3D model. Rendered at half resolution so the
+	 * polygons stay chunky. Moods: idle (bob and wave), happy (twirl and cheer),
 	 * sad (droop and slump).
 	 */
 	let {
 		size = 120,
 		mood = 'idle',
-		label = 'The Queen Bee, a bee wearing a royal crown'
+		label = 'The Elf Queen, an elf wearing a royal crown'
 	}: { size?: number; mood?: 'idle' | 'happy' | 'sad'; label?: string } = $props();
 
 	let canvas: HTMLCanvasElement;
 	// Read by the render loop; restarts the reaction when the mood changes.
-	let current = { mood: 'idle', since: 0 };
+	let current: { mood: 'idle' | 'happy' | 'sad'; since: number } = { mood: 'idle', since: 0 };
 	let clockRef: THREE.Clock | null = null;
 
 	$effect(() => {
@@ -28,18 +28,18 @@
 		renderer.setPixelRatio(1);
 		const scene = new THREE.Scene();
 		const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
-		camera.position.set(0, 0.35, 12.5);
-		camera.lookAt(0, 0.25, 0);
+		camera.position.set(0, 0.2, 10.2);
+		camera.lookAt(0, 0.12, 0);
 
-		scene.add(new THREE.HemisphereLight('#fff2d0', '#3a2060', 1.8));
+		scene.add(new THREE.HemisphereLight('#fff2d0', '#5a2a18', 1.8));
 		const key = new THREE.DirectionalLight('#ffffff', 2.2);
 		key.position.set(-3, 4, 6);
 		scene.add(key);
 
-		const bee = makeBee({ crown: true });
-		scene.add(bee.group);
+		const elf = makeElf({ queen: true });
+		scene.add(elf.group);
 
-		const px = Math.max(48, Math.round(size / 2));
+		const px = Math.max(56, Math.round(size / 1.6));
 		renderer.setSize(px, Math.round(px * 1.15), false);
 		camera.aspect = 1 / 1.15;
 		camera.updateProjectionMatrix();
@@ -51,7 +51,7 @@
 		let last = 0;
 
 		function draw(t: number) {
-			const g = bee.group;
+			const g = elf.group;
 			const since = t - current.since;
 			g.rotation.set(0, Math.sin(t * 0.9) * 0.45, 0);
 			g.position.set(0, Math.sin(t * 2.2) * 0.12, 0);
@@ -60,14 +60,14 @@
 				// Twirl once and hop
 				const p = since / 1.2;
 				g.rotation.y = p * Math.PI * 2;
-				g.position.y = Math.sin(p * Math.PI) * 0.8;
+				g.position.y = Math.sin(p * Math.PI) * 0.35;
 			} else if (current.mood === 'sad') {
 				g.rotation.x = 0.28;
 				g.rotation.z = 0.12;
 				g.rotation.y = Math.sin(t * 0.5) * 0.15;
 				g.position.y = -0.2 + Math.sin(t * 1.2) * 0.05;
 			}
-			flap(bee, t, current.mood === 'sad' ? 12 : 30);
+			animateElf(elf, t, current.mood);
 			renderer.render(scene, camera);
 		}
 

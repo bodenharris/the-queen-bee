@@ -27,16 +27,16 @@
 	.timer {
 		width: 60px;
 		height: 69px;
-		filter: drop-shadow(0 4px 0 rgb(11 8 32 / 0.7));
+		filter: drop-shadow(0 4px 0 rgb(26 13 8 / 0.7));
 	}
 	.hex {
 		clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
 	}
 	.chrome {
-		background: linear-gradient(160deg, #ffffff 0%, #ffe39a 20%, #6a3a9a 45%, #fff2c8 60%, #c06a2a 80%, #ffffff 100%);
+		background: linear-gradient(160deg, #ffffff 0%, #ffe39a 20%, #7a3418 45%, #fff2c8 60%, #a8481e 80%, #ffffff 100%);
 	}
 	.glass {
-		background: radial-gradient(ellipse at 50% 30%, #3a3aa8 0%, #1a1260 60%, #0c0838 100%);
+		background: radial-gradient(ellipse at 50% 30%, #1f6a50 0%, #10392c 60%, #081f19 100%);
 	}
 	.liquid {
 		--top: #fff0a0;

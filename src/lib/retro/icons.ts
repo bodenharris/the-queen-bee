@@ -24,7 +24,7 @@ export function categoryIcons(): Record<Category, string> {
 	const out = {} as Record<Category, string>;
 	for (const cat of CATEGORIES) {
 		const scene = new THREE.Scene();
-		scene.add(new THREE.HemisphereLight('#fff2d0', '#3a2060', 1.6));
+		scene.add(new THREE.HemisphereLight('#fff2d0', '#5a2a18', 1.6));
 		const key = new THREE.DirectionalLight('#ffffff', 2.4);
 		key.position.set(-3, 4, 5);
 		scene.add(key);

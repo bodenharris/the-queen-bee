@@ -5,11 +5,10 @@
 	--font-y2k: 'Exo 2', 'Trebuchet MS', sans-serif;
 	--font-sans: 'Exo 2', 'Trebuchet MS', sans-serif;
 
-	--color-ink: #0b0820;
+	--color-ink: #1a0d08;
 	--color-gold: #ffd23e;
-	--color-honey: #ffb21e;
-	--color-lilac: #c8c6ff;
-	--color-dusk: #8e8cd8;
+	--color-cream: #ffe9c9;
+	--color-mute: #9fb8a4;
 	--color-ruby: #ff3d6a;
 
 	--animate-shake: shake 0.4s ease-in-out;
@@ -32,7 +31,7 @@
 
 /* Only the root gets a colour: the 3D world canvas sits behind the body. */
 html {
-	background: #0a0838;
+	background: #1a0d08;
 }
 body {
 	color: white;
@@ -74,17 +73,17 @@ body {
 	.window-rim {
 		border-radius: 22px;
 		padding: 5px;
-		background: linear-gradient(160deg, #ffffff 0%, #ffe39a 18%, #6a3a9a 40%, #fff2c8 55%, #c06a2a 75%, #ffffff 100%);
+		background: linear-gradient(160deg, #ffffff 0%, #ffe39a 18%, #7a3418 40%, #fff2c8 55%, #a8481e 75%, #ffffff 100%);
 		box-shadow:
 			0 0 0 2px var(--color-ink),
-			0 14px 0 -4px rgb(11 8 32 / 0.55),
+			0 14px 0 -4px rgb(26 13 8 / 0.55),
 			0 20px 40px rgb(0 0 0 / 0.5);
 	}
 	.window {
 		border-radius: 18px;
 		background:
 			linear-gradient(180deg, rgb(255 255 255 / 0.16), transparent 30%),
-			linear-gradient(180deg, rgb(48 52 170 / 0.86), rgb(20 14 80 / 0.92));
+			linear-gradient(180deg, rgb(24 82 62 / 0.76), rgb(10 40 31 / 0.86));
 		box-shadow:
 			inset 0 2px 0 rgb(255 255 255 / 0.4),
 			inset 0 -3px 0 rgb(0 0 0 / 0.4),
@@ -94,7 +93,7 @@ body {
 
 	/* Recessed text field */
 	.field {
-		background: linear-gradient(180deg, #05041c, #17124f);
+		background: linear-gradient(180deg, #07170f, #123326);
 		box-shadow:
 			inset 0 3px 6px rgb(0 0 0 / 0.8),
 			0 0 0 2px var(--color-ink),
@@ -146,14 +145,14 @@ body {
 		filter: saturate(0.5);
 		cursor: not-allowed;
 	}
-	/* Honey-gold plastic (primary) */
+	/* Gold plastic (primary) */
 	.btn-plastic {
 		background: radial-gradient(ellipse at 50% 15%, #fff4b0 0%, #ffc21e 38%, #c46a00 100%);
 	}
 	.btn-chrome {
 		color: var(--color-ink);
 		text-shadow: 0 1px 0 rgb(255 255 255 / 0.7);
-		background: linear-gradient(180deg, #ffffff 0%, #c8d2ff 45%, #6a72b8 52%, #e0e6ff 100%);
+		background: linear-gradient(180deg, #ffffff 0%, #e8e0d4 45%, #8a7868 52%, #f6efe4 100%);
 	}
 
 	/* Candy-plastic tile in a given colour (--c) */
