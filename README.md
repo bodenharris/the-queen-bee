@@ -1,4 +1,4 @@
-# 👑🧝 The Elf Queen
+# The Elf Queen
 
 A daily trivia game with a twist, built with SvelteKit, Tailwind CSS and
 three.js, styled like an early-2000s console game set in a cozy winter hut:
