@@ -1,125 +1,115 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import * as THREE from 'three';
-	import { chromeMatcap, glowTexture, goldMatcap, honeyMatcap, honeycombTexture, skyTexture } from './textures';
-	import { flap, flat, honeyDropGeometry, makeBee, makeFlower } from './models';
+	import { makeFireplace, makeTree, makeWindow } from './cabin';
+	import { flap, flat, makeBee } from './models';
+	import { plankTexture } from './textures';
 
 	/**
-	 * Full-screen low-poly meadow at golden hour: a glowing honeycomb floor,
-	 * faceted hills, flowers, spinning honeycomb cells and honey drops, and a
-	 * few worker bees doing laps. Rendered at ~480px wide, stretched with
-	 * bilinear filtering, at 30fps — like a console of the era.
+	 * A cozy log hut on a winter night: a crackling fireplace straight ahead,
+	 * snow drifting past the window and a twinkling Christmas tree to the side.
+	 * Rendered at ~480px wide, stretched with bilinear filtering, at 30fps —
+	 * like a console of the era.
 	 */
 	let canvas: HTMLCanvasElement;
+
+	const lerp = THREE.MathUtils.lerp;
 
 	onMount(() => {
 		const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'low-power' });
 		renderer.setPixelRatio(1);
 
 		const scene = new THREE.Scene();
-		scene.background = skyTexture();
-		scene.fog = new THREE.Fog('#d0688a', 18, 95);
+		scene.background = new THREE.Color('#160905');
+		scene.fog = new THREE.Fog('#241008', 18, 42);
 
-		const camera = new THREE.PerspectiveCamera(62, 1, 0.1, 400);
-		camera.position.set(0, 3.2, 10);
+		const camera = new THREE.PerspectiveCamera(52, 1, 0.1, 100);
+		camera.position.set(0, 3.6, 8);
 
-		scene.add(new THREE.HemisphereLight('#ffe6b0', '#4a2060', 1.7));
-		const sun = new THREE.DirectionalLight('#ffd2a0', 2.4);
-		sun.position.set(-6, 10, 4);
-		scene.add(sun);
+		scene.add(new THREE.HemisphereLight('#ffc48e', '#46200f', 1.05));
+		const moon = new THREE.PointLight('#8db8ff', 18, 13, 1.6);
+		moon.position.set(-9, 4.5, -5.5);
+		scene.add(moon);
+		const firelight = new THREE.PointLight('#ff8a35', 70, 30, 1.45);
+		firelight.position.set(0, 1.7, -4.9);
+		scene.add(firelight);
 
-		// Honeycomb floor
-		const floorTex = honeycombTexture();
-		const floor = new THREE.Mesh(new THREE.PlaneGeometry(600, 600), new THREE.MeshLambertMaterial({ map: floorTex }));
+		// Room shell: plank floor and ceiling, log walls, heavy beams
+		const floor = new THREE.Mesh(
+			new THREE.PlaneGeometry(26, 20),
+			new THREE.MeshLambertMaterial({ map: plankTexture(5, 8) })
+		);
 		floor.rotation.x = -Math.PI / 2;
+		floor.position.set(0, 0, 2);
 		scene.add(floor);
 
-		// Setting sun behind the fog
-		const sunSprite = new THREE.Sprite(
-			new THREE.SpriteMaterial({ map: glowTexture(), fog: false, depthWrite: false, transparent: true })
+		const ceiling = new THREE.Mesh(
+			new THREE.PlaneGeometry(26, 20),
+			new THREE.MeshLambertMaterial({ map: plankTexture(4, 7), color: '#7a5240' })
 		);
-		sunSprite.position.set(0, 10, -150);
-		sunSprite.scale.set(75, 75, 1);
-		scene.add(sunSprite);
+		ceiling.rotation.x = Math.PI / 2;
+		ceiling.position.set(0, 9.2, 2);
+		scene.add(ceiling);
 
-		// Ring of faceted hills
-		const rng = mulberry(7);
-		const hillMat = flat('#7a2f8a');
-		const capMat = flat('#ffd98a');
-		for (let i = 0; i < 26; i++) {
-			const a = (i / 26) * Math.PI * 2 + rng() * 0.15;
-			const r = 80 + rng() * 25;
-			const hgt = 12 + rng() * 22;
-			const segs = 4 + Math.floor(rng() * 3);
-			const m = new THREE.Mesh(new THREE.ConeGeometry(10 + rng() * 8, hgt, segs), hillMat);
-			m.position.set(Math.cos(a) * r, hgt / 2 - 0.5, Math.sin(a) * r - 20);
-			m.rotation.y = rng() * Math.PI;
-			scene.add(m);
-			if (hgt > 26) {
-				// Honey-glazed peaks instead of snow
-				const cap = new THREE.Mesh(new THREE.ConeGeometry(3.2, hgt * 0.22, segs), capMat);
-				cap.position.set(m.position.x, hgt - hgt * 0.11 - 0.5, m.position.z);
-				cap.rotation.y = m.rotation.y;
-				scene.add(cap);
+		const logA = flat('#744020');
+		const logB = flat('#633416');
+		const longLog = new THREE.CylinderGeometry(0.52, 0.52, 26, 6);
+		const sideLog = new THREE.CylinderGeometry(0.52, 0.52, 20, 6);
+		for (let row = 0; row < 11; row++) {
+			const y = 0.42 + row * 0.86;
+			const material = row % 2 ? logA : logB;
+			const back = new THREE.Mesh(longLog, material);
+			back.rotation.z = Math.PI / 2;
+			back.position.set(0, y, -8);
+			scene.add(back);
+			for (const side of [-1, 1]) {
+				const wall = new THREE.Mesh(sideLog, material);
+				wall.rotation.x = Math.PI / 2;
+				wall.position.set(side * 12.8, y, 2);
+				scene.add(wall);
 			}
 		}
-
-		// Flowers along both sides of the path
-		const petals = ['#ff6aa0', '#ffffff', '#b892ff', '#ff8a3d', '#3fc6ff'];
-		for (let i = 0; i < 14; i++) {
-			const side = i % 2 ? 1 : -1;
-			const f = makeFlower(petals[i % petals.length]);
-			const s = 0.8 + rng() * 0.8;
-			f.scale.setScalar(s);
-			f.position.set(side * (6 + rng() * 10), 0, -2 - i * 4 - rng() * 3);
-			f.rotation.y = rng() * Math.PI;
-			scene.add(f);
+		const beamMat = flat('#3e2010');
+		for (const z of [-5.5, -1.5, 2.5, 6.5]) {
+			const beam = new THREE.Mesh(new THREE.BoxGeometry(26, 0.55, 0.65), beamMat);
+			beam.position.set(0, 8.85, z);
+			scene.add(beam);
 		}
 
-		// Floating shapes, kept to the sides so they frame the UI
-		const chrome = new THREE.MeshMatcapMaterial({ matcap: chromeMatcap() });
-		const gold = new THREE.MeshMatcapMaterial({ matcap: goldMatcap() });
-		const honey = new THREE.MeshMatcapMaterial({ matcap: honeyMatcap() });
-		const cell = new THREE.CylinderGeometry(1.1, 1.1, 0.55, 6);
-		const drop = honeyDropGeometry();
-		const shapes = [
-			{ g: cell, m: gold, p: [-7, 4.5, -4] },
-			{ g: drop, m: honey, p: [7.5, 5, -6] },
-			{ g: new THREE.OctahedronGeometry(1.2, 0), m: flat('#ff4a8d'), p: [-9, 2.4, -12] },
-			{ g: cell, m: chrome, p: [9.5, 2.6, -14] },
-			{ g: drop, m: honey, p: [-5.5, 7.5, -16] },
-			{ g: new THREE.IcosahedronGeometry(1, 0), m: flat('#3ef0c8'), p: [5, 8, -18] },
-			{ g: cell, m: honey, p: [-12, 5.5, -22] },
-			{ g: new THREE.IcosahedronGeometry(1.5, 0), m: chrome, p: [13, 6, -26] }
-		].map(({ g, m, p }, i) => {
-			const mesh = new THREE.Mesh(g, m);
-			mesh.position.set(p[0], p[1], p[2]);
-			mesh.userData = { y: p[1], phase: i * 1.3, spin: 0.4 + (i % 3) * 0.25 };
-			scene.add(mesh);
-			const shadow = blobShadow(1.2);
-			shadow.position.set(p[0], 0.02, p[2]);
-			scene.add(shadow);
-			mesh.userData.shadow = shadow;
-			return mesh;
+		// Round braided rug in front of the hearth
+		[
+			[6.1, '#5e1722'],
+			[5.2, '#b72c36'],
+			[4.25, '#e4b65c'],
+			[3.45, '#1e6a45'],
+			[2.45, '#b72c36']
+		].forEach(([radius, color], i) => {
+			const ring = new THREE.Mesh(new THREE.CircleGeometry(radius as number, 12), flat(color as string));
+			ring.rotation.x = -Math.PI / 2;
+			ring.scale.y = 0.62;
+			ring.position.set(0, 0.03 + i * 0.012, 0.3);
+			scene.add(ring);
 		});
 
-		// Worker bees doing slow laps in the distance
-		const workers = Array.from({ length: 4 }, (_, i) => {
-			const b = makeBee({ crown: false });
-			b.group.scale.setScalar(0.45);
-			b.group.userData = { r: 9 + i * 3, h: 4 + (i % 2) * 2.5, speed: 0.35 + i * 0.08, phase: i * 1.7, z: -14 - i * 5 };
-			scene.add(b.group);
-			return b;
-		});
+		const fireplace = makeFireplace();
+		fireplace.group.position.set(0, 0, -7.9);
+		scene.add(fireplace.group);
 
-		function blobShadow(r: number) {
-			const m = new THREE.Mesh(
-				new THREE.CircleGeometry(r, 8),
-				new THREE.MeshBasicMaterial({ color: '#000', transparent: true, opacity: 0.35, depthWrite: false })
-			);
-			m.rotation.x = -Math.PI / 2;
-			return m;
-		}
+		const winterWindow = makeWindow();
+		winterWindow.group.position.set(-9, 4.4, -7.42);
+		scene.add(winterWindow.group);
+
+		const tree = makeTree();
+		tree.group.position.set(9, 0, -5.4);
+		scene.add(tree.group);
+
+		// Two worker bees keeping warm by the tree
+		const bees = [0, 1].map((i) => {
+			const bee = makeBee({ crown: false });
+			bee.group.scale.setScalar(0.22);
+			scene.add(bee.group);
+			return { bee, phase: i * Math.PI, radius: 2.5 + i * 0.5, y: 4 + i * 1.2 };
+		});
 
 		function resize() {
 			const w = window.innerWidth;
@@ -127,6 +117,15 @@
 			const scale = Math.max(2, Math.round(w / 480));
 			renderer.setSize(Math.ceil(w / scale), Math.ceil(h / scale), false);
 			camera.aspect = w / h;
+
+			// Narrow screens pull the props together so all three stay in view.
+			const k = THREE.MathUtils.clamp((camera.aspect - 0.6) / 0.9, 0, 1);
+			camera.fov = lerp(68, 52, k);
+			fireplace.group.scale.setScalar(lerp(0.56, 1, k));
+			winterWindow.group.scale.setScalar(lerp(0.42, 1, k));
+			winterWindow.group.position.x = lerp(-3.45, -9, k);
+			tree.group.scale.setScalar(lerp(0.62, 1, k));
+			tree.group.position.x = lerp(3.3, 9, k);
 			camera.updateProjectionMatrix();
 		}
 		resize();
@@ -138,23 +137,24 @@
 		let raf = 0;
 
 		function draw(t: number) {
-			floorTex.offset.y = (t * 0.2) % 1;
-			for (const s of shapes) {
-				const u = s.userData;
-				s.rotation.x = t * u.spin * 0.7;
-				s.rotation.y = t * u.spin;
-				s.position.y = u.y + Math.sin(t * 1.2 + u.phase) * 0.5;
-				u.shadow.scale.setScalar(1 - (s.position.y - u.y + 0.5) * 0.25);
+			fireplace.update(t);
+			winterWindow.update(t);
+			tree.update(t);
+			firelight.intensity = 70 + Math.sin(t * 8.3) * 11 + Math.sin(t * 13.1) * 7 + Math.sin(t * 21) * 4;
+
+			for (const { bee, phase, radius, y } of bees) {
+				const a = t * 0.42 + phase;
+				bee.group.position.set(
+					tree.group.position.x + Math.cos(a) * radius * tree.group.scale.x,
+					y * tree.group.scale.y + Math.sin(t * 2 + phase) * 0.18,
+					tree.group.position.z + Math.sin(a) * radius
+				);
+				bee.group.rotation.y = -a;
+				flap(bee, t);
 			}
-			for (const b of workers) {
-				const u = b.group.userData;
-				const a = t * u.speed + u.phase;
-				b.group.position.set(Math.cos(a) * u.r, u.h + Math.sin(t * 2 + u.phase) * 0.4, u.z + Math.sin(a) * 4);
-				b.group.rotation.y = -a + Math.PI; // face along the lap
-				flap(b, t);
-			}
-			camera.position.x = Math.sin(t * 0.15) * 0.8;
-			camera.lookAt(0, 2.2, -20);
+
+			camera.position.x = Math.sin(t * 0.13) * 0.28;
+			camera.lookAt(0, 3.9, -8);
 			renderer.render(scene, camera);
 		}
 
@@ -166,28 +166,18 @@
 			draw(t);
 		}
 
-		if (still) draw(0);
+		if (still) draw(1);
 		else frame();
 
 		return () => {
 			cancelAnimationFrame(raf);
 			window.removeEventListener('resize', resize);
 			scene.traverse((o) => {
-				if (o instanceof THREE.Mesh) o.geometry.dispose();
+				if (o instanceof THREE.Mesh || o instanceof THREE.Points) o.geometry.dispose();
 			});
 			renderer.dispose();
 		};
 	});
-
-	/** Seeded random so the hills and flowers land in the same place every visit. */
-	function mulberry(seed: number) {
-		return () => {
-			seed = (seed + 0x6d2b79f5) | 0;
-			let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-			t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-			return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-		};
-	}
 </script>
 
 <canvas bind:this={canvas} class="world fixed inset-0 -z-10 size-full" aria-hidden="true"></canvas>

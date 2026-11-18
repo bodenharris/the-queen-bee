@@ -152,7 +152,7 @@
 				<CategoryIcon category={question.category} size={26} />
 				{question.category}
 			</span>
-			<span class="text-outline font-retro text-sm tracking-wider text-lilac">
+			<span class="text-outline font-retro text-sm tracking-wider text-cream">
 				CELL <span class="hud-num text-lg">{number}</span>/6
 			</span>
 		</div>
@@ -181,7 +181,7 @@
 							autocapitalize="off"
 							spellcheck="false"
 							aria-label="Your answer"
-							class="field min-w-0 flex-1 rounded-xl px-4 py-3 text-lg font-bold text-[#fff6a8] placeholder:text-dusk"
+							class="field min-w-0 flex-1 rounded-xl px-4 py-3 text-lg font-bold text-[#fff6a8] placeholder:text-mute"
 						/>
 					</div>
 					<button class="btn-plastic rounded-full px-7 py-3 text-lg" disabled={!input.trim()}>LOCK IN</button>
@@ -194,7 +194,7 @@
 			<div class="mt-7">
 				<div class="flex items-end justify-between gap-4">
 					<div class="min-w-0">
-						{#if !result.timedOut}<p class="text-outline font-retro text-xs tracking-widest text-lilac">YOU SAID</p>{/if}
+						{#if !result.timedOut}<p class="text-outline font-retro text-xs tracking-widest text-cream">YOU SAID</p>{/if}
 						<p class="text-outline truncate font-retro text-2xl text-white sm:text-3xl">{result.answer}</p>
 						{#if result.display}<p class="text-outline text-sm font-bold text-[#fff6a8]">{result.display}</p>{/if}
 					</div>
@@ -223,14 +223,14 @@
 							></span>
 						{/each}
 					</div>
-					<div class="text-outline mt-2 flex justify-between gap-4 text-xs font-bold text-lilac">
+					<div class="text-outline mt-2 flex justify-between gap-4 text-xs font-bold text-cream">
 						<span>1 · {worst.name}</span>
 						<span class="text-right">{best.name} · 100</span>
 					</div>
 				</div>
 
 				{#if !result.timedOut}
-					<p class="text-outline mt-4 text-sm font-bold text-lilac">
+					<p class="text-outline mt-4 text-sm font-bold text-cream">
 						Ranked <span class="hud-num text-base">#{result.rank}</span> of {result.total} answers in the royal records.
 					</p>
 				{/if}
@@ -241,7 +241,7 @@
 						{#each order.slice(0, 5) as a, i (a.name)}
 							<li class="flex justify-between gap-4 {a.name === result.answer ? 'text-gold' : 'text-white/85'}">
 								<span>{i + 1}. {a.name}</span>
-								<span class="text-right text-lilac/80">{display(question, a)}</span>
+								<span class="text-right text-cream/80">{display(question, a)}</span>
 							</li>
 						{/each}
 					</ol>
@@ -257,13 +257,13 @@
 
 <style>
 	.meter {
-		background: linear-gradient(180deg, #05041c, #17124f);
+		background: linear-gradient(180deg, #07170f, #123326);
 		box-shadow:
 			inset 0 2px 4px rgb(0 0 0 / 0.8),
 			0 0 0 2px var(--color-ink);
 	}
 	.seg {
-		background: #2a2470;
+		background: #1f4a3a;
 		box-shadow: inset 0 -2px 0 rgb(0 0 0 / 0.35);
 	}
 	.seg.lit {

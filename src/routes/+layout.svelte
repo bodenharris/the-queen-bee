@@ -16,7 +16,7 @@
 	const favicon =
 		'data:image/svg+xml,' +
 		encodeURIComponent(
-			`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">${facets}<polygon points="${outline}" fill="none" stroke="#0b0820" stroke-width="2" stroke-linejoin="round"/></svg>`
+			`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">${facets}<polygon points="${outline}" fill="none" stroke="#1a0d08" stroke-width="2" stroke-linejoin="round"/></svg>`
 		);
 </script>
 

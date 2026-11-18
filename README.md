@@ -1,7 +1,8 @@
 # 👑🐝 The Queen Bee
 
 A daily trivia game with a twist, built with SvelteKit, Tailwind CSS and
-three.js, styled like an early-2000s console game: low-poly 3D, chrome,
+three.js, styled like an early-2000s console game set in a cozy winter hut:
+low-poly 3D, a crackling fireplace, chrome,
 glossy plastic and CRT scanlines.
 
 Every day Her Majesty sets **six easy prompts**, one from each category:
@@ -45,7 +46,7 @@ npm run build   # production build
 | `src/lib/data/questions.ts` | The question bank: prompts, twists and answer values |
 | `src/lib/data/countries.ts`, `people.ts` | Larger answer tables (countries, states, presidents, monarchs) |
 | `src/lib/game.ts` | Answer matching, scoring and daily question selection |
-| `src/lib/retro/` | The N64-style 3D layer (three.js): background world, 3D logo, the 3D queen bee, low-poly models and pre-rendered category icons |
+| `src/lib/retro/` | The N64-style 3D layer (three.js): cabin scene, 3D logo, the 3D queen bee, low-poly models and pre-rendered category icons |
 | `src/lib/components/` | Hive ring, question card, timer and results |
 | `src/routes/+page.svelte` | Title screen, game screen and How to play |
 

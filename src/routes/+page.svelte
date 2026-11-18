@@ -122,41 +122,44 @@
 		<polygon points="20,2 32,28 20,30" fill="#ffc21e" />
 		<polygon points="8,28 20,46 20,30" fill="#e08a00" />
 		<polygon points="32,28 20,46 20,30" fill="#9a4a00" />
-		<polygon points="20,2 8,28 20,46 32,28" fill="none" stroke="#0b0820" stroke-width="2.5" stroke-linejoin="round" />
+		<polygon points="20,2 8,28 20,46 32,28" fill="none" stroke="#1a0d08" stroke-width="2.5" stroke-linejoin="round" />
 	</svg>
 {/snippet}
 
 {#if !started}
 	<!-- ───────────── Title screen ───────────── -->
-	<main class="flex min-h-screen flex-col items-center px-4 pt-6 pb-16 text-center sm:pt-10">
+	<main class="flex min-h-screen flex-col items-center px-4 pt-5 pb-4 text-center sm:pt-7">
 		<div class="w-full max-w-2xl">
 			<p class="text-gold font-retro text-2xl tracking-[0.4em] sm:text-3xl">THE</p>
 			<Logo3D text="QUEEN BEE" label="The Queen Bee" />
 		</div>
 
-		<div class="-mt-2 sm:-mt-4">
-			<Bee3D size={150} />
+		<div class="-mt-3 sm:-mt-6">
+			<Bee3D size={124} />
 		</div>
 
-		<p class="text-outline mt-2 font-retro text-lg tracking-[0.35em] text-[#7fe6ff] sm:text-xl">THE DAILY BUZZ</p>
-		<p class="text-outline mt-2 max-w-md text-sm font-bold text-lilac sm:text-base">
-			6 easy prompts · 30 seconds each · the twist decides your honey
-		</p>
+		<!-- Pinned to the bottom so the fire stays visible in the middle of the screen -->
+		<div class="mt-auto flex w-full flex-col items-center pt-44">
+			<p class="text-outline font-retro text-lg tracking-[0.35em] text-[#7fe6ff] sm:text-xl">THE DAILY BUZZ</p>
+			<p class="text-outline mt-1 max-w-xl text-sm font-bold text-cream sm:text-base">
+				6 easy prompts · 30 seconds each · the twist decides your honey
+			</p>
 
-		<button onclick={start} class="btn-plastic mt-9 flex w-full max-w-sm items-center justify-center gap-3 rounded-full py-4 text-2xl">
-			<span class="cursor-blink" aria-hidden="true">▶</span>
-			{finished ? 'VIEW YOUR HONEY' : done > 0 ? 'CONTINUE' : 'PRESS START'}
-		</button>
+			<button onclick={start} class="btn-plastic mt-4 flex w-full max-w-sm items-center justify-center gap-3 rounded-full py-3.5 text-2xl">
+				<span class="cursor-blink" aria-hidden="true">▶</span>
+				{finished ? 'VIEW YOUR HONEY' : done > 0 ? 'CONTINUE' : 'PRESS START'}
+			</button>
 
-		<div class="mt-7 flex flex-wrap items-center justify-center gap-3">
-			<button class="btn-chrome rounded-full px-5 py-2 text-sm" onclick={() => (showHelp = true)}>HOW TO PLAY</button>
-			{#if puzzleNumber(prevDate) >= 1}
-				<a href="?date={prevDate}" onclick={start} class="btn-chrome rounded-full px-5 py-2 text-sm">◀ ARCHIVE</a>
-			{/if}
+			<div class="mt-5 flex flex-wrap items-center justify-center gap-3">
+				<button class="btn-chrome rounded-full px-5 py-2 text-sm" onclick={() => (showHelp = true)}>HOW TO PLAY</button>
+				{#if puzzleNumber(prevDate) >= 1}
+					<a href="?date={prevDate}" onclick={start} class="btn-chrome rounded-full px-5 py-2 text-sm">◀ ARCHIVE</a>
+				{/if}
+				<p class="text-outline font-retro text-sm tracking-widest text-cream">
+					HIVE <span class="hud-num text-lg">#{puzzle}</span> · {dateLabel.toUpperCase()}
+				</p>
+			</div>
 		</div>
-		<p class="text-outline mt-6 font-retro text-sm tracking-widest text-lilac">
-			HIVE <span class="hud-num text-lg">#{puzzle}</span> · {dateLabel.toUpperCase()}
-		</p>
 	</main>
 {:else}
 	<!-- ───────────── Game ───────────── -->
@@ -164,7 +167,7 @@
 		<header class="flex items-start justify-between gap-3">
 			<button class="text-left" onclick={() => (started = false)} title="Back to title">
 				<span class="text-gold block font-retro text-lg leading-tight sm:text-xl">THE QUEEN BEE</span>
-				<span class="text-outline block text-xs font-bold tracking-wider text-lilac">
+				<span class="text-outline block text-xs font-bold tracking-wider text-cream">
 					HIVE #{puzzle} · {dateLabel.toUpperCase()}
 				</span>
 			</button>
@@ -182,7 +185,7 @@
 		</header>
 
 		<!-- archive navigation, tucked into the top-left corner -->
-		<nav class="text-outline mt-3 flex flex-wrap items-center gap-3 font-retro text-xs tracking-wider text-lilac" aria-label="Archive">
+		<nav class="text-outline mt-3 flex flex-wrap items-center gap-3 font-retro text-xs tracking-wider text-cream" aria-label="Archive">
 			{#if !isToday}
 				{#if puzzleNumber(prevDate) >= 1}<a href="?date={prevDate}" class="hover:text-gold">◀ OLDER</a>{/if}
 				<span class="opacity-60">ARCHIVE HIVE</span>
@@ -216,7 +219,7 @@
 				{/if}
 			</section>
 
-			<footer class="text-outline mt-10 text-center font-retro text-xs tracking-widest text-lilac/80">
+			<footer class="text-outline mt-10 text-center font-retro text-xs tracking-widest text-cream/80">
 				A NEW HIVE OPENS EVERY DAY AT MIDNIGHT
 			</footer>
 		</main>
@@ -248,7 +251,7 @@
 					<p class="tile mt-1 inline-block rounded-lg px-2 py-0.5 font-retro text-sm text-ink" style="--c:#ffc21e">
 						smaller is better
 					</p>
-					<ul class="mt-3 space-y-1 font-bold text-lilac">
+					<ul class="mt-3 space-y-1 font-bold text-cream">
 						<li>Russia → <span class="hud-num">1</span></li>
 						<li>France → <span class="hud-num">20</span></li>
 						<li>Singapore → <span class="hud-num">81</span></li>

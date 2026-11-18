@@ -143,44 +143,6 @@ export function flap(bee: Bee, t: number, speed = 28) {
 	for (const w of bee.wings) w.rotation.y = w.userData.side * (0.35 + a);
 }
 
-/** Simple five-petal flower on a stem. */
-export function makeFlower(petal: string) {
-	const g = new THREE.Group();
-	const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 2, 4), flat('#3aa84a'));
-	stem.position.y = 1;
-	g.add(stem);
-	const leaf = new THREE.Mesh(new THREE.ConeGeometry(0.25, 0.7, 3), flat('#4cc25a'));
-	leaf.position.set(0.25, 0.7, 0);
-	leaf.rotation.z = -1;
-	g.add(leaf);
-	const center = new THREE.Mesh(new THREE.IcosahedronGeometry(0.3, 0), flat('#ffd23e'));
-	center.position.y = 2.1;
-	g.add(center);
-	for (let i = 0; i < 5; i++) {
-		const a = (i / 5) * Math.PI * 2;
-		const p = new THREE.Mesh(new THREE.SphereGeometry(0.32, 5, 3), flat(petal));
-		p.scale.set(1, 0.4, 0.7);
-		p.position.set(Math.cos(a) * 0.48, 2.1, Math.sin(a) * 0.48);
-		p.rotation.y = -a;
-		g.add(p);
-	}
-	return g;
-}
-
-/** A teardrop of honey (lathe-turned, low segment count). */
-export function honeyDropGeometry() {
-	const pts = [
-		[0, -0.95],
-		[0.4, -0.85],
-		[0.66, -0.6],
-		[0.7, -0.3],
-		[0.5, 0.15],
-		[0.25, 0.65],
-		[0, 1.2]
-	].map(([x, y]) => new THREE.Vector2(x, y));
-	return new THREE.LatheGeometry(pts, 7);
-}
-
 // ───────────── Category models (rendered once into icon sprites) ─────────────
 
 export function categoryModel(category: string): THREE.Object3D {

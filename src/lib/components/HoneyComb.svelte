@@ -112,7 +112,7 @@
 	.cell {
 		width: var(--w);
 		height: var(--h);
-		filter: drop-shadow(0 5px 0 rgb(11 8 32 / 0.7));
+		filter: drop-shadow(0 5px 0 rgb(26 13 8 / 0.7));
 	}
 	.hex {
 		clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
@@ -124,11 +124,11 @@
 			var(--c);
 	}
 	.chrome {
-		background: linear-gradient(160deg, #ffffff 0%, #ffe39a 20%, #6a3a9a 45%, #fff2c8 60%, #c06a2a 80%, #ffffff 100%);
+		background: linear-gradient(160deg, #ffffff 0%, #ffe39a 20%, #7a3418 45%, #fff2c8 60%, #a8481e 80%, #ffffff 100%);
 	}
 	/* Recessed dark glass behind the honey */
 	.glass {
-		background: radial-gradient(ellipse at 50% 30%, #3a3aa8 0%, #1a1260 60%, #0c0838 100%);
+		background: radial-gradient(ellipse at 50% 30%, #1f6a50 0%, #10392c 60%, #081f19 100%);
 		box-shadow: inset 0 4px 8px rgb(0 0 0 / 0.7);
 	}
 	/* Honey fills from the bottom up to the score, with a bright surface line */
@@ -153,12 +153,12 @@
 		cursor: default;
 	}
 	button.cell:not(:disabled):hover {
-		filter: drop-shadow(0 5px 0 rgb(11 8 32 / 0.7)) brightness(1.12);
+		filter: drop-shadow(0 5px 0 rgb(26 13 8 / 0.7)) brightness(1.12);
 	}
 	button.cell.active {
 		animation: bob 1.1s ease-in-out infinite;
 		z-index: 1;
-		filter: drop-shadow(0 5px 0 rgb(11 8 32 / 0.7)) drop-shadow(0 0 14px rgb(255 210 62 / 0.75));
+		filter: drop-shadow(0 5px 0 rgb(26 13 8 / 0.7)) drop-shadow(0 0 14px rgb(255 210 62 / 0.75));
 	}
 	@keyframes bob {
 		50% {

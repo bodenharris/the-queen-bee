@@ -57,11 +57,11 @@
 
 <div class="window-rim">
 	<div class="window px-5 py-7 sm:px-7">
-		<p class="text-outline text-center font-retro text-sm tracking-[0.2em] text-lilac">
+		<p class="text-outline text-center font-retro text-sm tracking-[0.2em] text-cream">
 			HIVE #{puzzle} · HARVEST COMPLETE
 		</p>
 		<p class="hud-num mt-3 text-center text-8xl leading-none tabular-nums">{total}</p>
-		<p class="text-outline mt-2 text-center text-sm font-bold text-lilac">drops of honey out of 600</p>
+		<p class="text-outline mt-2 text-center text-sm font-bold text-cream">drops of honey out of 600</p>
 		<p class="mt-5 text-center">
 			<span class="tile inline-block rounded-full px-5 py-1.5 font-retro text-xl text-ink" style="--c:#ffc21e; text-shadow:0 1px 0 rgb(255 255 255/0.6)">
 				{hiveRank(total)}
@@ -96,13 +96,13 @@
 			{#each [['Played', stats.played], ['Average', stats.average], ['Best', stats.best], ['Streak', stats.streak]] as [label, value] (label)}
 				<div class="field rounded-xl py-3">
 					<p class="hud-num text-2xl sm:text-3xl">{value}</p>
-					<p class="text-[10px] font-bold tracking-wider text-lilac uppercase sm:text-xs">{label}</p>
+					<p class="text-[10px] font-bold tracking-wider text-cream uppercase sm:text-xs">{label}</p>
 				</div>
 			{/each}
 		</div>
 
 		{#if isToday}
-			<p class="text-outline mt-6 text-center font-retro text-sm tracking-wide text-lilac">
+			<p class="text-outline mt-6 text-center font-retro text-sm tracking-wide text-cream">
 				NEW HIVE OPENS IN <span class="hud-num text-lg">{countdown}</span>
 			</p>
 		{/if}
