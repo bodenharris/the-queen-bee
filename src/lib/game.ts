@@ -253,30 +253,30 @@ export const CATEGORY_STYLE: Record<Category, { emoji: string; color: string }> 
 	Science: { emoji: '🔬', color: '#3fc6ff' }
 };
 
-/** Share-grid glyph: a full honey pot for great answers, down to a bare comb. */
+/** Share-grid glyph: a gift for great answers, down to a lump of coal. */
 export function scoreSquare(score: number): string {
-	if (score >= 90) return '🍯';
+	if (score >= 90) return '🎁';
 	if (score >= 70) return '🟨';
 	if (score >= 40) return '🟧';
 	return '⬛';
 }
 
 /** What Her Majesty says about an answer. */
-export function beeVerdict(score: number): { title: string; line: string; mood: 'happy' | 'idle' | 'sad' } {
-	if (score === 100) return { title: 'Royal decree!', line: 'Un-bee-lievable. The perfect answer!', mood: 'happy' };
-	if (score >= 90) return { title: 'Bee-autiful!', line: 'The whole hive is buzzing about that one.', mood: 'happy' };
-	if (score >= 70) return { title: 'Sweet as honey', line: 'A fine contribution to the royal stores.', mood: 'happy' };
-	if (score >= 40) return { title: 'Not too shabby', line: 'Respectable work, little worker bee.', mood: 'idle' };
-	if (score >= 15) return { title: 'A bit waxy…', line: 'Hmm. Her Majesty expected more nectar.', mood: 'sad' };
-	return { title: 'Bzzzt!', line: 'Wrong end of the hive, I’m afraid!', mood: 'sad' };
+export function elfVerdict(score: number): { title: string; line: string; mood: 'happy' | 'idle' | 'sad' } {
+	if (score === 100) return { title: 'Royal decree!', line: 'Jingle all the way. The perfect answer!', mood: 'happy' };
+	if (score >= 90) return { title: 'Elf-tastic!', line: 'The whole workshop is cheering for that one.', mood: 'happy' };
+	if (score >= 70) return { title: 'Sleigh-worthy', line: 'A fine addition to the toy sack.', mood: 'happy' };
+	if (score >= 40) return { title: 'Not too shabby', line: 'Respectable work, little helper.', mood: 'idle' };
+	if (score >= 15) return { title: 'A bit frosty…', line: 'Hmm. Her Majesty hoped for more cheer.', mood: 'sad' };
+	return { title: 'Lump of coal!', line: 'Straight onto the Naughty List, I’m afraid!', mood: 'sad' };
 }
 
 /** Rank title for a full day's total out of 600. */
-export function hiveRank(total: number): string {
-	if (total >= 540) return 'Queen Bee 👑';
-	if (total >= 450) return 'Royal Guard';
-	if (total >= 350) return 'Honey Maker';
-	if (total >= 250) return 'Worker Bee';
-	if (total >= 150) return 'Drone';
-	return 'Larva';
+export function elfRank(total: number): string {
+	if (total >= 540) return 'Elf Queen 👑';
+	if (total >= 450) return 'Head Elf';
+	if (total >= 350) return 'Master Toymaker';
+	if (total >= 250) return 'Gift Wrapper';
+	if (total >= 150) return 'Cookie Taster';
+	return 'Apprentice Elf';
 }

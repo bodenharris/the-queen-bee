@@ -5,142 +5,102 @@ import { goldMatcap } from './textures';
 export const flat = (color: THREE.ColorRepresentation) =>
 	new THREE.MeshLambertMaterial({ color, flatShading: true });
 
-const BLACK = '#1c1424';
-const YELLOW = '#ffc81e';
+const SKIN = '#ffd2ad';
+const TRIM = '#fff4e6';
 
-/** A low-poly sphere whose triangles are coloured in horizontal bands (bee stripes). */
-function stripedSphere(radius: number, bands: [number, string][]) {
-	const geo = new THREE.SphereGeometry(radius, 10, 8).toNonIndexed();
-	const pos = geo.getAttribute('position');
-	const colors = new Float32Array(pos.count * 3);
-	const c = new THREE.Color();
-	for (let i = 0; i < pos.count; i += 3) {
-		const y = (pos.getY(i) + pos.getY(i + 1) + pos.getY(i + 2)) / 3 / radius; // -1..1
-		const band = bands.find(([top]) => y >= top) ?? bands[bands.length - 1];
-		c.set(band[1]).convertSRGBToLinear();
-		for (let k = 0; k < 3; k++) colors.set([c.r, c.g, c.b], (i + k) * 3);
-	}
-	geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-	geo.computeVertexNormals();
-	return new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ vertexColors: true, flatShading: true }));
-}
-
-export interface Bee {
+export interface Elf {
 	group: THREE.Group;
-	wings: THREE.Object3D[];
+	arms: THREE.Object3D[];
 }
 
-/** The queen (with crown) or a plain worker bee, facing +z, about 4 units tall. */
-export function makeBee({ crown = true } = {}): Bee {
+/** Distance from an elf's origin down to the soles of its shoes. */
+export const ELF_FEET = 2.05;
+
+/** The Elf Queen (hair and crown) or a helper elf (pointed hat), facing +z. */
+export function makeElf({ queen = false, tunic = '#1f8a50', hat = '#c9273c' } = {}): Elf {
 	const group = new THREE.Group();
-
-	// Striped abdomen
-	// Band edges sit exactly on the sphere's latitude lines (8 rows: cos(k·π/8)),
-	// so every stripe is a clean ring of polygons rather than a zig-zag.
-	const abdomen = stripedSphere(1, [
-		[0.7, YELLOW],
-		[0.37, BLACK],
-		[-0.01, YELLOW],
-		[-0.39, BLACK],
-		[-0.72, YELLOW],
-		[-2, BLACK]
-	]);
-	abdomen.scale.set(1, 1.2, 0.95);
-	abdomen.position.y = -0.55;
-	group.add(abdomen);
-
-	const stinger = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.45, 5), flat(BLACK));
-	stinger.rotation.x = Math.PI;
-	stinger.position.y = -1.85;
-	group.add(stinger);
-
-	// Head and face
-	const head = new THREE.Mesh(new THREE.SphereGeometry(0.78, 9, 7), flat(YELLOW));
-	head.position.y = 1.15;
-	group.add(head);
+	const add = (geometry: THREE.BufferGeometry, material: THREE.Material, x: number, y: number, z: number) => {
+		const mesh = new THREE.Mesh(geometry, material);
+		mesh.position.set(x, y, z);
+		group.add(mesh);
+		return mesh;
+	};
+	const outfit = flat(queen ? '#d3263f' : tunic);
+	const skin = flat(SKIN);
+	const trim = flat(TRIM);
+	const dark = flat('#1c1424');
+	const gold = new THREE.MeshMatcapMaterial({ matcap: goldMatcap(), side: THREE.DoubleSide });
 
 	for (const side of [-1, 1]) {
-		const eye = new THREE.Mesh(new THREE.SphereGeometry(0.19, 6, 4), flat(BLACK));
-		eye.position.set(side * 0.3, 1.27, 0.66);
-		eye.scale.set(1, 1.2, 0.6);
-		group.add(eye);
-		const glint = new THREE.Mesh(new THREE.SphereGeometry(0.06, 4, 3), new THREE.MeshBasicMaterial({ color: '#ffffff' }));
-		glint.position.set(side * 0.3 - 0.06, 1.35, 0.78);
-		group.add(glint);
-		const cheek = new THREE.Mesh(new THREE.SphereGeometry(0.14, 6, 4), flat('#ff7f9a'));
-		cheek.position.set(side * 0.5, 1.0, 0.56);
-		cheek.scale.set(1, 0.6, 0.4);
-		group.add(cheek);
+		for (let i = 0; i < 3; i++) {
+			add(new THREE.CylinderGeometry(0.13, 0.13, 0.24, 5), i % 2 ? trim : flat(queen ? '#1f8a50' : hat), side * 0.25, -1.68 + i * 0.24, 0);
+		}
+		add(new THREE.BoxGeometry(0.3, 0.2, 0.46), outfit, side * 0.25, -1.94, 0.08);
+		add(new THREE.ConeGeometry(0.12, 0.38, 4), outfit, side * 0.25, -1.86, 0.42).rotation.x = 1.2;
+		add(new THREE.IcosahedronGeometry(0.07, 0), gold, side * 0.25, -1.76, 0.6);
 
-		// Antennae poke out either side of the crown
-		const stalk = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.8, 4), flat(BLACK));
-		stalk.position.set(side * 0.42, 2.05, 0.1);
-		stalk.rotation.z = -side * 0.55;
-		group.add(stalk);
-		const tip = new THREE.Mesh(new THREE.SphereGeometry(0.1, 5, 4), flat(BLACK));
-		tip.position.set(side * 0.66, 2.38, 0.1);
-		group.add(tip);
+		const pivot = new THREE.Group();
+		pivot.position.set(side * 0.38, 0.2, 0);
+		pivot.userData.side = side;
+		const sleeve = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.15, 0.72, 5), outfit);
+		sleeve.position.y = -0.36;
+		const hand = new THREE.Mesh(new THREE.SphereGeometry(0.13, 5, 4), skin);
+		hand.position.y = -0.78;
+		pivot.add(sleeve, hand);
+		group.add(pivot);
 	}
 
-	const smile = new THREE.Mesh(new THREE.TorusGeometry(0.17, 0.045, 3, 8, Math.PI), flat(BLACK));
-	smile.rotation.z = Math.PI;
-	smile.position.set(0, 1.02, 0.74);
-	group.add(smile);
+	add(new THREE.CylinderGeometry(0.36, 1, 1.55, 8), outfit, 0, -0.5, 0);
+	add(new THREE.TorusGeometry(1, 0.1, 4, 8), trim, 0, -1.27, 0).rotation.x = Math.PI / 2;
+	add(new THREE.CylinderGeometry(0.4, 0.43, 0.16, 8), queen ? gold : dark, 0, 0.02, 0);
+	add(new THREE.ConeGeometry(0.62, 0.3, 8), queen ? trim : flat(hat), 0, 0.42, 0);
 
-	// Royal crown: an open gold band, six spikes and a ruby
-	if (crown) {
-		const gold = new THREE.MeshMatcapMaterial({ matcap: goldMatcap(), side: THREE.DoubleSide });
-		const band = new THREE.Mesh(new THREE.CylinderGeometry(0.52, 0.46, 0.34, 6, 1, true), gold);
-		band.position.y = 1.86;
-		group.add(band);
+	add(new THREE.SphereGeometry(0.64, 9, 7), skin, 0, 1.05, 0);
+	add(new THREE.SphereGeometry(0.07, 4, 3), flat('#ffb48f'), 0, 1, 0.65);
+	for (const side of [-1, 1]) {
+		const ear = add(new THREE.ConeGeometry(0.15, 0.62, 4), skin, side * 0.82, 1.18, 0);
+		ear.rotation.z = -side * (Math.PI / 2 - 0.35);
+		const eye = add(new THREE.SphereGeometry(0.13, 6, 4), dark, side * 0.24, 1.12, 0.54);
+		eye.scale.set(0.9, 1.2, 0.6);
+		add(new THREE.SphereGeometry(0.04, 4, 3), new THREE.MeshBasicMaterial({ color: '#ffffff' }), side * 0.24 - 0.04, 1.17, 0.63);
+		const cheek = add(new THREE.SphereGeometry(0.12, 6, 4), flat('#ff8f9f'), side * 0.4, 0.92, 0.48);
+		cheek.scale.set(1, 0.6, 0.4);
+	}
+	const smile = add(new THREE.TorusGeometry(0.14, 0.035, 3, 8, Math.PI), dark, 0, 0.9, 0.61);
+	smile.rotation.z = Math.PI;
+
+	if (queen) {
+		const hair = flat('#a8481e');
+		add(new THREE.SphereGeometry(0.69, 8, 6), hair, 0, 1.12, -0.2);
+		for (const side of [-1, 1]) add(new THREE.BoxGeometry(0.22, 1.1, 0.2), hair, side * 0.58, 0.55, -0.15);
+		add(new THREE.CylinderGeometry(0.42, 0.38, 0.3, 6, 1, true), gold, 0, 1.72, 0);
 		for (let i = 0; i < 6; i++) {
 			const a = (i / 6) * Math.PI * 2 + Math.PI / 6;
-			const spike = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.36, 4), gold);
-			spike.position.set(Math.sin(a) * 0.5, 2.2, Math.cos(a) * 0.5);
-			group.add(spike);
-			const pearl = new THREE.Mesh(new THREE.SphereGeometry(0.06, 4, 3), gold);
-			pearl.position.set(Math.sin(a) * 0.5, 2.4, Math.cos(a) * 0.5);
-			group.add(pearl);
+			add(new THREE.ConeGeometry(0.11, 0.32, 4), gold, Math.sin(a) * 0.4, 2.02, Math.cos(a) * 0.4);
+			add(new THREE.SphereGeometry(0.05, 4, 3), gold, Math.sin(a) * 0.4, 2.2, Math.cos(a) * 0.4);
 		}
-		const ruby = new THREE.Mesh(new THREE.OctahedronGeometry(0.12, 0), flat('#ff2a5a'));
-		ruby.position.set(0, 1.88, 0.52);
-		group.add(ruby);
-		for (const side of [-1, 1]) {
-			const sapphire = new THREE.Mesh(new THREE.OctahedronGeometry(0.08, 0), flat('#3fc6ff'));
-			sapphire.position.set(side * 0.34, 1.88, 0.4);
-			group.add(sapphire);
-		}
+		add(new THREE.OctahedronGeometry(0.1, 0), flat('#ff2a5a'), 0, 1.74, 0.43);
+		for (const side of [-1, 1]) add(new THREE.OctahedronGeometry(0.07, 0), flat('#3fc6ff'), side * 0.27, 1.74, 0.33);
+	} else {
+		add(new THREE.ConeGeometry(0.58, 1.15, 7), flat(hat), -0.08, 2, 0).rotation.z = 0.18;
+		add(new THREE.TorusGeometry(0.56, 0.09, 4, 8), trim, 0, 1.52, 0).rotation.x = Math.PI / 2;
+		add(new THREE.IcosahedronGeometry(0.14, 0), trim, -0.2, 2.6, 0);
 	}
 
-	// Translucent wings on pivots so they can flap
-	const wingMat = new THREE.MeshLambertMaterial({
-		color: '#d8f2ff',
-		transparent: true,
-		opacity: 0.7,
-		side: THREE.DoubleSide,
-		flatShading: true
-	});
-	const wings: THREE.Object3D[] = [];
-	for (const side of [-1, 1]) {
-		const pivot = new THREE.Group();
-		pivot.position.set(side * 0.55, 0.45, -0.35);
-		const wing = new THREE.Mesh(new THREE.CircleGeometry(0.85, 6), wingMat);
-		wing.scale.set(1, 0.62, 1);
-		wing.position.set(side * 0.75, 0.35, 0);
-		wing.rotation.z = side * 0.5;
-		pivot.add(wing);
-		pivot.userData.side = side;
-		group.add(pivot);
-		wings.push(pivot);
-	}
-
-	return { group, wings };
+	const arms = group.children.filter((child) => child.userData.side);
+	return { group, arms };
 }
 
-/** Flap wings: call every frame with elapsed seconds. */
-export function flap(bee: Bee, t: number, speed = 28) {
-	const a = Math.sin(t * speed) * 0.55;
-	for (const w of bee.wings) w.rotation.y = w.userData.side * (0.35 + a);
+/** Pose the arms each frame: relaxed with an occasional wave, cheering, or hanging low. */
+export function animateElf(elf: Elf, t: number, mood: 'idle' | 'happy' | 'sad' = 'idle') {
+	elf.arms.forEach((arm, i) => {
+		const side = arm.userData.side;
+		let angle = 0.42 + Math.sin(t * 2 + i * Math.PI) * 0.08;
+		if (mood === 'happy') angle = 2.45 + Math.sin(t * 12 + i * Math.PI) * 0.22;
+		else if (mood === 'sad') angle = 0.08 + Math.sin(t * 1.2) * 0.03;
+		else if (side > 0 && t % 6 < 1.6) angle = 2.25 + Math.sin(t * 9) * 0.28;
+		arm.rotation.z = side * angle;
+	});
 }
 
 // ───────────── Category models (rendered once into icon sprites) ─────────────

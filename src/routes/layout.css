@@ -7,7 +7,6 @@
 
 	--color-ink: #1a0d08;
 	--color-gold: #ffd23e;
-	--color-honey: #ffb21e;
 	--color-cream: #ffe9c9;
 	--color-mute: #9fb8a4;
 	--color-ruby: #ff3d6a;
@@ -146,7 +145,7 @@ body {
 		filter: saturate(0.5);
 		cursor: not-allowed;
 	}
-	/* Honey-gold plastic (primary) */
+	/* Gold plastic (primary) */
 	.btn-plastic {
 		background: radial-gradient(ellipse at 50% 15%, #fff4b0 0%, #ffc21e 38%, #c46a00 100%);
 	}

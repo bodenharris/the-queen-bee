@@ -145,19 +145,6 @@ export const goldMatcap = () =>
 		[1, '#ffcf4a']
 	]);
 
-/** Glassy amber honey. */
-export const honeyMatcap = () =>
-	matcap(
-		[
-			[0, '#fff4c0'],
-			[0.3, '#ffbf2a'],
-			[0.6, '#d86a00'],
-			[0.8, '#7a2a00'],
-			[1, '#ffb030']
-		],
-		1
-	);
-
 /** Soft round glow for the fire. */
 export function glowTexture() {
 	return canvasTexture(64, 64, (g, w, h) => {

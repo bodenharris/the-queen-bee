@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { flat } from './models';
-import { chromeMatcap, glowTexture, goldMatcap, honeyMatcap, stoneTexture, winterViewTexture } from './textures';
+import { chromeMatcap, glowTexture, goldMatcap, stoneTexture, winterViewTexture } from './textures';
 
 type Vec3 = [number, number, number];
 
@@ -69,11 +69,20 @@ export function makeFireplace(): Fireplace {
 		if (i % 2) place(group, new THREE.Mesh(new THREE.IcosahedronGeometry(0.08, 0), berry), [x, 3.78, 2.24]);
 	}
 
-	const honey = new THREE.MeshMatcapMaterial({ matcap: honeyMatcap() });
-	const cloth = flat('#c9273c');
-	for (const [x, s] of [[-3.9, 1], [-3.25, 0.75], [3.5, 0.9]] as const) {
-		place(group, new THREE.Mesh(new THREE.CylinderGeometry(0.3 * s, 0.26 * s, 0.68 * s, 7), honey), [x, 4.25 + 0.34 * s, 1.1]);
-		place(group, new THREE.Mesh(new THREE.CylinderGeometry(0.2 * s, 0.36 * s, 0.14 * s, 7), cloth), [x, 4.25 + 0.74 * s, 1.1]);
+	// Cocoa and a plate of cookies left out for the night shift
+	const cocoa = flat('#5a2d18');
+	const marshmallow = flat('#fff4e6');
+	for (const [x, color] of [[-3.95, '#c9273c'], [-3.2, '#1f8a50']] as const) {
+		const mug = flat(color);
+		place(group, new THREE.Mesh(new THREE.CylinderGeometry(0.27, 0.24, 0.5, 7), mug), [x, 4.5, 1.1]);
+		place(group, new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.03, 7), cocoa), [x, 4.76, 1.1]);
+		place(group, box(0.1, 0.08, 0.1, marshmallow), [x + 0.05, 4.8, 1.12]);
+		place(group, new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.04, 3, 6), mug), [x + 0.3, 4.5, 1.1]);
+	}
+	place(group, new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.45, 0.07, 8), marshmallow), [3.55, 4.29, 1.1]);
+	const cookie = flat('#b9773a');
+	for (const [x, y, z] of [[3.35, 4.37, 1.0], [3.72, 4.37, 1.02], [3.55, 4.37, 1.3], [3.55, 4.45, 1.1]] as const) {
+		place(group, new THREE.Mesh(new THREE.CylinderGeometry(0.19, 0.19, 0.07, 7), cookie), [x, y, z]);
 	}
 
 	const wax = flat('#ffe9a8');

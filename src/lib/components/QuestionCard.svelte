@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CATEGORY_STYLE, beeVerdict, display, findAnswer, ranked, scoreAnswer } from '../game';
+	import { CATEGORY_STYLE, elfVerdict, display, findAnswer, ranked, scoreAnswer } from '../game';
 	import type { Question, Result } from '../types';
 	import CategoryIcon from '../retro/CategoryIcon.svelte';
 	import HexTimer from './HexTimer.svelte';
@@ -89,7 +89,7 @@
 	const order = $derived(ranked(question));
 	const best = $derived(order[0]);
 	const worst = $derived(order[order.length - 1]);
-	const verdict = $derived(result ? beeVerdict(result.score) : null);
+	const verdict = $derived(result ? elfVerdict(result.score) : null);
 	const SEGMENTS = 20;
 
 	$effect(() => {
@@ -123,9 +123,9 @@
 			message =
 				m.kind === 'ambiguous'
 					? `“${input.trim()}” could mean more than one thing — be more specific.`
-					: `“${input.trim()}” isn't in the royal records. Check the spelling or try another — no sting!`;
+					: `“${input.trim()}” isn't on the Nice List. Check the spelling or try another — no coal!`;
 			onmessage?.(
-				m.kind === 'ambiguous' ? 'Which one, dear? Be more specific!' : "Never heard of it! Try again — no sting."
+				m.kind === 'ambiguous' ? 'Which one, dear? Be more specific!' : "Never heard of it! Try again — no coal."
 			);
 			shake = true;
 			setTimeout(() => (shake = false), 400);
@@ -153,7 +153,7 @@
 				{question.category}
 			</span>
 			<span class="text-outline font-retro text-sm tracking-wider text-cream">
-				CELL <span class="hud-num text-lg">{number}</span>/6
+				GIFT <span class="hud-num text-lg">{number}</span>/6
 			</span>
 		</div>
 
@@ -231,7 +231,7 @@
 
 				{#if !result.timedOut}
 					<p class="text-outline mt-4 text-sm font-bold text-cream">
-						Ranked <span class="hud-num text-base">#{result.rank}</span> of {result.total} answers in the royal records.
+						Ranked <span class="hud-num text-base">#{result.rank}</span> of {result.total} answers on the Nice List.
 					</p>
 				{/if}
 
@@ -248,7 +248,7 @@
 				</details>
 
 				<button onclick={onnext} class="btn-plastic mt-7 w-full rounded-full py-4 text-xl">
-					{isLast ? 'SEE YOUR HONEY ▶' : 'NEXT CELL ▶'}
+					{isLast ? 'SEE YOUR CHEER ▶' : 'NEXT GIFT ▶'}
 				</button>
 			</div>
 		{/if}
